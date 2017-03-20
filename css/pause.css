@@ -1,0 +1,70 @@
+@font-face {
+	font-family: DeadKansas;
+	src: url(font/DeadKansas.ttf);
+	font-weight: bold;
+}
+
+.fullscreen-bg {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	z-index: -100;
+}
+
+.fullscreen-bg__video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+@media (min-aspect-ratio: 16/9) {
+	.fullscreen-bg__video {
+		height: 300%;
+		top: -100%;
+	}
+}
+
+@media (max-aspect-ratio: 16/9) {
+	.fullscreen-bg__video {
+		width: 300%;
+		left: -100%;
+	}
+}
+
+.titulo {
+	text-align: center;
+}
+
+.titulo img {
+	width: 370px;
+	height: 240px;
+}
+
+.menu {
+	display: flex;
+	color: white;
+	text-align: center;
+	font-size: 35px;
+	height: 70px;
+	font-family: DeadKansas;
+    margin-top: 25px;
+    margin-bottom: 25px;
+	justify-content: center;
+}
+
+.menu:hover {
+	background-image: url("../imagenes/Seleccion de Pause.png");
+	background-repeat: no-repeat;
+	background-size: 201px 113px;
+	background-position: center;
+	cursor: pointer;
+}
+
+body {
+	background: black;
+}

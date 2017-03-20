@@ -1,8 +1,24 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<div>
+<head>
+	<link rel="stylesheet" href="css/index.css">
+	<title>Pausa</title>
+</head>
+<style>
+	@font-face {
+		font-family: DeadKansas;
+		src: url(font/DeadKansas.ttf);
+		font-weight: bold;
+	}
+</style>
+<body>
+	<div class="fullscreen-bg">
+		<video loop muted autoplay poster="img/videoframe.jpg" class="fullscreen-bg__video">
+			<source src="video/fondo.wmv" type="video/mp4">
+			</video>
 		</div>
-	</body>
+		<div class="titulo"><img src="imagenes/Tittle.png"></div>
+		<div class="menu">JUGAR</div>
+		<div class="menu" onclick="window.location='opciones.html';">OPCIONES</div>
+		<div class="menu">SCORES</div>
+</body>
 </html>
