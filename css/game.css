@@ -1,0 +1,36 @@
+* {
+	margin: 0;
+}
+
+.vida {
+    top: 15px;
+    left: 15px;
+    position: absolute;
+	background: red;
+	width: 500px;
+	height: 20px;
+}
+
+.score {
+	position: absolute;
+    text-align: center;
+    width: 100%;
+    color: red;
+    font-size: 40px;
+    font-family: DeadKansas;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+}
+
+.numScore {
+	position: absolute;
+	    padding-left: 22px;
+    padding-top: 8px;
+	font-size: 30px;
+    display: inline-block;
+}
