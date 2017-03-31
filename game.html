@@ -33,6 +33,7 @@
 	var vida = 100;
 	var id = 0;
 	var score = 0;
+	var jugador;
 	
 	$(document).ready(function() {
 
@@ -106,14 +107,16 @@
 		});
 
 		var geometry = new THREE.BoxGeometry(1, 1, 1);
-		cube1 = new THREE.Mesh(geometry, material);
+		cube1 = new THREE.Mesh( new THREE.CubeGeometry( 1, 1, 1 ), new THREE.MeshNormalMaterial() );
 		cube1.position.x = posXJugador;	
 		cube1.position.y = posYJugador;
 		cube1.position.z = posZJugador;
 		cube1.castShadow = true;
 		scene.add(cube1);
 	
-		//addModel("assets/models/dog/dog.obj", "assets/models/dog/Tex_0552_7.png");
+		addModel("assets/models/soldier/soldier.obj","assets/models/dog/dog.jpg","jugador");
+		
+		
 
 		scene.add(ambientLight);
 		scene.add(directionalLight);
@@ -151,23 +154,15 @@
 	}
 	
 	function spawnZombie() {	
-		var cube2 = cube1.clone();
-		cube2.castShadow = true;
-		var num = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
-		num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases		
-		cube2.position.x = num;
-		cube2.position.z = -5;
-		id++;
-		cube2.name = id;
-		zombies.push(cube2);		
-		scene.add(cube2);
+		addModel("assets/models/zombie/zombie.obj","assets/models/dog/dog.jpg","zombie");
+		
 	}
 	
 	function de2ra(degree)   { 
 		return degree*(Math.PI/180); 
 	}
 	
-	function addModel(objPath, texturePath){
+	function addModel(objPath, texturePath, name){
 		var manager = new THREE.LoadingManager();
 		manager.onProgress = function ( item, loaded, total ) {
 			console.log( item, loaded, total );
@@ -198,18 +193,39 @@
 		loader.load( objPath, function ( object ) {
 
 			object.traverse( function ( child ) {
-
 				if ( child instanceof THREE.Mesh ) {
-
 					child.material.map = texture;
-
 				}
+			});
+			
+			object.position.x = posXJugador;
+			object.position.y = posYJugador;
+			object.position.z = posZJugador;
+			object.scale.set(0.01,0.01,0.01);
+			object.name = name;
 
-			} );
+			if(name == "jugador"){
+				object.rotation.y = de2ra(180);
+				jugador = object.clone();
+				scene.add( jugador );
+			}
 
-			object.position.y = - 95;
-			scene.add( object );
+			if(name == "zombie"){
+				var cube2 = object.clone();
+				cube2.castShadow = true;
+				var num = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
+				num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases		
+				cube2.position.x = num;
+				cube2.position.z = -5;
+				id++;
+				cube2.name = id;
+				zombies.push(cube2);		
+				scene.add(cube2);
+			}
 
+
+
+			
 		}, onProgress, onError );
 	}
 	
@@ -326,11 +342,14 @@
 			switch(keycode){
 				case 37 : //left arrow
 					cube1.position.x -= 1;
+					jugador.position.x -= 1;
 					posXJugador = cube1.position.x;
 					//camera.position.x = camera.position.x - delta;
 				break;
 				case 39 : // right arrow
 					cube1.position.x += 1;	
+					jugador.position.x += 1;
+
 					posXJugador = cube1.position.x;
 					//camera.position.x = camera.position.x + delta;
 				break;
@@ -339,10 +358,16 @@
 			
 			if(cube1.position.x > 3){
 				cube1.position.x = 3;
+				posXJugador = 3;
+				jugador.position.x = 3;
+
 			}
 			
 			if(cube1.position.x < -3){
+				posXJugador = -3;
 				cube1.position.x = -3;
+				jugador.position.x = -3;
+
 			}
 			
 			document.addEventListener('keyup',onDocumentKeyUp,false);
