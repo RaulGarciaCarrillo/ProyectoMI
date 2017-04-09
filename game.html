@@ -2,6 +2,8 @@
 <head>
 	<title>Dead Hunting</title>
 	<link rel="stylesheet" href="css/game.css">
+	<link rel="stylesheet" href="js/sweetalert-master/sweetalert.css">
+	<script type="text/javascript" src="js/sweetalert-master/sweetalert-dev.js"></script>
 	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript" src="js/three.js"></script>
 	<script src="http://mamboleoo.be/learnThree/demos/OBJLoader.js"></script>
@@ -114,7 +116,7 @@
 		cube1.castShadow = true;
 		scene.add(cube1);
 	
-		addModel("assets/models/soldier/soldier.obj","assets/models/dog/dog.jpg","jugador");
+		addModel("assets/models/soldier/soldier.obj","assets/models/dog/Tex_0552_7.png","jugador");
 		
 		
 
@@ -143,18 +145,12 @@
 	});
 	
 	function spawnBullet(){
-		var cube2 = cube1.clone();		
-		cube2.position.x = posXJugador;
-		cube2.position.y = posYJugador;
-		cube2.position.z = posZJugador;
-		id++;
-		cube2.name = id;
-		balas.push(cube2);		
-		scene.add(cube2);
+		addModel("assets/models/bullet/bullet.obj","assets/models/dog/Tex_0552_7.png","bullet");
+		
 	}
 	
 	function spawnZombie() {	
-		addModel("assets/models/zombie/zombie.obj","assets/models/dog/dog.jpg","zombie");
+		addModel("assets/models/zombie/zombie.obj","assets/models/dog/Tex_0552_7.png","zombie");
 		
 	}
 	
@@ -201,16 +197,18 @@
 			object.position.x = posXJugador;
 			object.position.y = posYJugador;
 			object.position.z = posZJugador;
-			object.scale.set(0.01,0.01,0.01);
+			
 			object.name = name;
 
 			if(name == "jugador"){
+				object.scale.set(0.01,0.01,0.01);
 				object.rotation.y = de2ra(180);
 				jugador = object.clone();
 				scene.add( jugador );
 			}
 
 			if(name == "zombie"){
+				object.scale.set(0.015,0.015,0.015);
 				var cube2 = object.clone();
 				cube2.castShadow = true;
 				var num = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
@@ -223,7 +221,18 @@
 				scene.add(cube2);
 			}
 
-
+			if(name == "bullet"){
+				object.rotation.y = de2ra(-180);
+				object.scale.set(0.015,0.015,0.015);
+				var cube2 = object.clone();		
+				cube2.position.x = posXJugador;
+				cube2.position.y = posYJugador;
+				cube2.position.z = posZJugador;
+				id++;
+				cube2.name = id;
+				balas.push(cube2);		
+				scene.add(cube2);
+			}
 
 			
 		}, onProgress, onError );
@@ -314,6 +323,28 @@
 				var vidaSize = $(".vida").css("width");
 				vidaSize = vidaSize.replace(/\D/g,'');
 				$(".vida").css("width", vidaSize - 1);
+
+				if (vidaSize-1 <= 0){
+						if(localStorage.usuario == "" || localStorage.usuario == null){
+							swal({
+							  title: "SCORE: " + score,
+							  type: "input",
+							  closeOnConfirm: false,
+							  animation: "slide-from-top",
+							  inputPlaceholder: "Nombre"
+							},
+							function(inputValue){
+							  if (inputValue === false) return false;
+							  
+							  if (inputValue === "") {
+							    swal.showInputError("You need to write something!");
+							    return false
+							  }
+							  
+							  swal("Nice!", "You wrote: " + inputValue, "success");
+							});
+						}	
+				}
 			}
 			
 		}
