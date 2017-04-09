@@ -19,8 +19,20 @@ var jugador;
 var zombie;
 var bala;
 var objects = [];
+var gameover = false;
 
 $(document).ready(function() {
+
+	(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8";
+    fjs.parentNode.insertBefore(js, fjs);
+  }
+  (document, 'script', 'facebook-jssdk')
+
+);
 
 	var visibleSize = {
 		width: window.innerWidth,
@@ -90,14 +102,29 @@ $(document).ready(function() {
 
 	///// USEN ESTO PARA CARGAR UN NUEVO MODELO
 
-	loadOBJWithMTL("assets/models/zombie/", "jetski.obj", "jetski.mtl", (object) => {
+	/*loadOBJWithMTL("assets/models/zombie/", "jetski.obj", "jetski.mtl", (object) => {
 		object.position.z = 5;
 		//object.scale.set(0.01,0.01,0.01);
 
 		objects.push(object);
 
 		scene.add(object);
+	});*/
+
+	loadOBJWithMTL("assets/models/terreno/", "escenario.obj", "escenario.mtl", (object) => {
+		object.position.z = 0;
+		object.position.x = 0;
+		object.position.y = 0;
+		//object.scale.set(0.05,0.05,0.05);
+
+
+		object.scale.set(0.01,0.01,0.01);
+
+		objects.push(object);
+
+		scene.add(object);
 	});
+
 
 	/////////////////////////
 
@@ -117,8 +144,8 @@ $(document).ready(function() {
 	}
 
 
-	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/jetski.jpg","zombie");
-	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/jetski.jpg","bala");
+	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","zombie");
+	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bala");
 
 	addModel("assets/models/soldier/soldier.obj","assets/models/zombie/jetski.jpg","jugador");
 	scene.add(ambientLight);
@@ -127,7 +154,9 @@ $(document).ready(function() {
 	//agregamos el canvas
 	$("#scene-section").append(renderer.domElement);		
 	
-	render();
+ 
+		render();
+	
 	
 	setInterval(spawnZombie, 2000);
 	
@@ -318,6 +347,7 @@ function limpiarArreglos() {
 }
 
 function render() {
+	if(!gameover){
 	requestAnimationFrame(render);
 	
 	
@@ -365,6 +395,67 @@ function render() {
 			var vidaSize = $(".vida").css("width");
 			vidaSize = vidaSize.replace(/\D/g,'');
 			$(".vida").css("width", vidaSize - 1);
+
+
+			if((vidaSize - 1) <= 0) {
+
+				gameover = true;	
+
+				if(localStorage.usuario === null || localStorage.usuario == ""){
+					swal({
+				  title: "GAME OVER",
+				  text: "Score: " + score,
+				  type: "input",
+				  showCancelButton: true,
+				  confirmButtonText: "PUBLICAR EN FACEBOOK",
+				  cancelButtonText: "Continuar",
+				  closeOnConfirm: false,
+				  inputPlaceholder: "Escribe tu nombre"
+				},
+				function(inputValue){
+					if (inputValue === false) return false;
+  
+					  if (inputValue === "") {
+					    swal.showInputError("You need to write something!");
+
+					    return false
+					  } else{
+					  	localStorage.usuario = inputValue;
+					  	window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+					  }
+
+
+				  	
+				});
+				}	else {
+
+					swal({
+				  title: "GAME OVER",
+				  text: "Usuario: " + localStorage.usuario + "/n Score: " + score,
+				  showCancelButton: true,
+				  confirmButtonText: "PUBLICAR EN FACEBOOK",
+				  cancelButtonText: "Continuar",
+				  closeOnConfirm: false,
+				},
+				function(isConfirm){
+					if (isConfirm) {
+    window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+  } else {
+    window.location='index.html';
+  }
+
+					  	
+					  
+
+
+				  	
+				});
+
+				}	
+
+				
+			}
+
 		}		
 	}
 	
@@ -423,6 +514,7 @@ function render() {
 
 	renderer.render(scene, camera);
 }
+}
 
 function removeEntity(object) {
 	var selectedObject = scene.getObjectByName(object.name);
@@ -430,3 +522,10 @@ function removeEntity(object) {
 	animate();
 }	
 
+
+
+
+
+
+
+ 
