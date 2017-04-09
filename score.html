@@ -1,0 +1,56 @@
+<html>
+<head>
+	<link rel="stylesheet" href="css/index.css">
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="js/score.js"></script>
+	<title>Score</title>
+</head>
+<style>
+	@font-face {
+		font-family: DeadKansas;
+		src: url(font/DeadKansas.ttf);
+		font-weight: bold;
+	}
+
+	body {
+		background: white;
+	}
+
+	* {
+		font-family: DeadKansas;
+	}
+
+	table {
+		border-collapse: collapse;
+	    margin-top: 100px;
+	    font-size: 22px;
+	}
+
+	tr {
+		background: #920000;
+		color: white;
+	}
+
+	tr:nth-child(even){
+		background-color: #540000;
+		color: white;
+	}
+
+</style>
+<body>
+	<div class="fullscreen-bg">
+		<video loop muted autoplay poster="img/videoframe.jpg" class="fullscreen-bg__video">
+			<source src="video/fondo.wmv" type="video/mp4">
+		</video>
+	</div>
+	<div class="titulo">Score</div>
+	<div style="display: flex; justify-content: center;">
+		<table class="listaScore" cellpadding="10">
+			<tr style="background: black; color: white">
+				<td width="600px">Nombre</td>
+				<td width="100px">Score</td>
+			</tr>
+		</table>	
+	</div>	
+</body>
+</html>
