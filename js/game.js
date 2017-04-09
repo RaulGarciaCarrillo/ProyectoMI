@@ -246,6 +246,7 @@ function addModelByBase(name) {
 		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
 		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases		
 		zombieSpawned.position.x = xPosSpawn;
+		zombieSpawned.position.y = 0;
 		zombieSpawned.position.z = -5;
 		id++;
 		zombieSpawned.name = id;
@@ -298,7 +299,7 @@ function loadObjBases(objPath, texturePath, name) {
 		});
 
 		if(name == "zombie"){
-			object.scale.set(0.01,0.01,0.01);
+			object.scale.set(0.012,0.012,0.012);
 			zombie = object.clone();	
 		}
 
@@ -399,9 +400,11 @@ function render() {
 
 			if((vidaSize - 1) <= 0) {
 
-				gameover = true;	
+				
 
-				if(localStorage.usuario === null || localStorage.usuario == ""){
+				 
+
+				if(localStorage.usuario === undefined || localStorage.usuario == ""){
 					swal({
 				  title: "GAME OVER",
 				  text: "Score: " + score,
@@ -412,19 +415,20 @@ function render() {
 				  closeOnConfirm: false,
 				  inputPlaceholder: "Escribe tu nombre"
 				},
-				function(inputValue){
+				function(inputValue, isConfirm){
+					
 					if (inputValue === false) return false;
   
 					  if (inputValue === "") {
 					    swal.showInputError("You need to write something!");
 
 					    return false
-					  } else{
-					  	localStorage.usuario = inputValue;
+					  } else{					  	
 					  	window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
 					  }
 
-
+					   localStorage.usuario = inputValue;
+					   window.location='index.html';
 				  	
 				});
 				}	else {
@@ -439,20 +443,24 @@ function render() {
 				},
 				function(isConfirm){
 					if (isConfirm) {
-    window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
-  } else {
-    window.location='index.html';
-  }
-
-					  	
-					  
-
-
-				  	
+					    window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+					  } else {
+					    window.location='index.html';
+					  }				  	
 				});
 
 				}	
 
+					if(!gameover){
+					$.ajax({
+		      			type: "POST",
+							url: "http://proyectoaigc.netai.net/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
+		    			}).done(function(data) {
+		      				console.log(data);
+		    			});
+				}
+
+				gameover = true;
 				
 			}
 
@@ -469,7 +477,6 @@ function render() {
 			balas[i].position.z -= 2;
 		}		
 	}			
-
 	sky.rotation.y += 0.0005;
 	document.addEventListener('keydown',onDocumentKeyDown,false);
 	function onDocumentKeyDown(event){

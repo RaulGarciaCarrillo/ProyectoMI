@@ -20,6 +20,13 @@ $(document).ready(function() {
 
 		$(".namre").val(localStorage.usuario);
 	}
+
+	document.addEventListener('keyup',onDocumentKeyUp,false);
+
+	function onDocumentKeyUp(event){
+		localStorage.usuario = $(".namre").val();
+	}
+
 })
 	
 </script>
