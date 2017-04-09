@@ -1,0 +1,94 @@
+newmtl Soldier:BottomsSG
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Bottom_Diffuse.png
+bump SWATGuy_Bottom_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Bottom_Specular.png
+Ns 18.00
+newmtl Soldier:EyelashesSG
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Body_Diffuse.png
+bump SWATGuy_Body_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Body_Specular.png
+Ns 18.00
+newmtl Soldier:EyelashesSG1
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Body_Diffuse.png
+bump SWATGuy_Body_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Body_Specular.png
+Ns 18.00
+newmtl Soldier:EyewearSG
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Eyewear_Diffuse.png
+bump SWATGuy_Eyewear_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Eyewear_Specular.png
+Ns 18.00
+newmtl Soldier:GlovesSG
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Glove_Diffuse.png
+bump SWATGuy_Glove_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Glove_Specular.png
+Ns 18.00
+newmtl Soldier:HatsSG
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Hat_Diffuse.png
+bump SWATGuy_Hat_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Hat_Specular.png
+Ns 18.00
+newmtl Soldier:ShoesSG
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Shoes_Diffuse.png
+bump SWATGuy_Shoes_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Shoes_Specular.png
+Ns 18.00
+newmtl Soldier:TopsSG
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+map_Kd SWATGuy_Top_Diffuse.png
+bump SWATGuy_Top_Normal.png -bm 0
+Ni 0.5
+Ks 0.50 0.50 0.50
+map_Ks SWATGuy_Top_Specular.png
+Ns 18.00
+newmtl initialShadingGroup
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.50 0.50 0.50
+Tf 0.5 0.5 0.5
+Ni 0.5

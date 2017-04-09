@@ -1,6 +1,7 @@
 <html>
 <head>
 	<link rel="stylesheet" href="css/opciones.css">
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 	<title>Pausa</title>
 </head>
 <style>
@@ -10,6 +11,18 @@
 		font-weight: bold;
 	}
 </style>
+<script>
+$(document).ready(function() {
+
+	if(localStorage.usuario === null || localStorage.usuario == ""){
+
+	}else{
+
+		$(".namre").val(localStorage.usuario);
+	}
+})
+	
+</script>
 <body>
 	<div class="fullscreen-bg">
 		<video loop muted autoplay poster="" class="fullscreen-bg__video">
@@ -20,7 +33,7 @@
 		<table cellspacing="10" cellpadding="10">
 			<tr>
 				<td>NOMBRE</td>
-				<td colspan="2" class="nombre"><input/></td>
+				<td colspan="2" class="nombre"><input/ class="namre"></td>
 			</tr>
 			<tr>
 				<td>AUDIO</td>
