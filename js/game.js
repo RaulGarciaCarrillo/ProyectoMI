@@ -147,7 +147,7 @@ $(document).ready(function() {
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","zombie");
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bala");
 
-	addModel("assets/models/soldier/soldier.obj","assets/models/zombie/jetski.jpg","jugador");
+	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
 	scene.add(ambientLight);
 	scene.add(directionalLight);
 
