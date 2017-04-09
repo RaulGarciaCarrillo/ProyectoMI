@@ -18,6 +18,7 @@ var score = 0;
 var jugador;
 var zombie;
 var bala;
+var objects = [];
 
 $(document).ready(function() {
 
@@ -87,15 +88,18 @@ $(document).ready(function() {
 		color: new THREE.Color(0.4, 0, 0)
 	});
 
+	///// USEN ESTO PARA CARGAR UN NUEVO MODELO
 
-	loadOBJWithMTL("assets/models/zombie", "zombie.obj", "jetski.mtl", (object) => {
-		object.position.z = -10;
-		object.rotation.x = THREE.Math.degToRad(-90);
+	loadOBJWithMTL("assets/models/zombie/", "jetski.obj", "jetski.mtl", (object) => {
+		object.position.z = 5;
+		//object.scale.set(0.01,0.01,0.01);
 
 		objects.push(object);
 
 		scene.add(object);
 	});
+
+	/////////////////////////
 
 	function loadOBJWithMTL(path, objFile, mtlFile, onLoadCallback) {
 		var mtlLoader = new THREE.MTLLoader();
@@ -113,10 +117,10 @@ $(document).ready(function() {
 	}
 
 
-	loadObjBases("assets/models/zombie/zombie.obj","assets/textures/grass.jpg","zombie");
-	loadObjBases("assets/models/zombie/zombie.obj","assets/textures/grass.jpg","bala");
+	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/jetski.jpg","zombie");
+	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/jetski.jpg","bala");
 
-	addModel("assets/models/soldier/soldier.obj","assets/textures/grass.jpg","jugador");
+	addModel("assets/models/soldier/soldier.obj","assets/models/zombie/jetski.jpg","jugador");
 	scene.add(ambientLight);
 	scene.add(directionalLight);
 
