@@ -7,6 +7,9 @@ var ambientLight;
 var directionalLight;
 
 var zombies = [];
+var humanos = [];
+var jefesZombie = []; 
+var vidaJefe = [];
 var balas = [];
 var posXJugador = 1;
 var posYJugador = 0;
@@ -18,6 +21,8 @@ var score = 0;
 var jugador;
 var zombie;
 var bala;
+var jefeZombie;
+var humano;
 var objects = [];
 var gameover = false;
 
@@ -145,6 +150,8 @@ $(document).ready(function() {
 
 
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","zombie");
+	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","jefeZombie");
+	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","humano");
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bala");
 
 	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
@@ -158,7 +165,9 @@ $(document).ready(function() {
 		render();
 	
 	
-	setInterval(spawnZombie, 2000);
+	setTimeout(spawnZombie, 2000);
+	setTimeout(spawnJefeZombie, 5000);
+	setTimeout(spawnHumano, 10000);
 	
 	$('body').mousedown(function(event) {
 	switch (event.which) {
@@ -174,12 +183,21 @@ $(document).ready(function() {
 	
 });
 
+//Spawn Models
 function spawnBullet() {
 	addModelByBase("bala");
 }
 
 function spawnZombie() {	
 	addModelByBase("zombie");
+}
+
+function spawnJefeZombie() {	
+	addModelByBase("jefeZombie");
+}
+
+function spawnHumano() {	
+	addModelByBase("humano");
 }
 
 function de2ra(degree)   { 
@@ -264,6 +282,33 @@ function addModelByBase(name) {
 		balas.push(balaSpawned);		
 		scene.add(balaSpawned);
 	}
+
+	if (name = "jefeZombie"){
+		var jefeZombieSpawned = jefeZombie.clone();
+		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
+		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
+		jefeZombieSpawned.position.x = xPosSpawn;
+		jefeZombieSpawned.position.y = 0;
+		jefeZombieSpawned.position.z = -5;
+		id++;
+		jefeZombieSpawned.name = id;
+		vidaJefe.push(3);
+		jefesZombie.push(jefeZombieSpawned);		
+		scene.add(jefeZombieSpawned);
+	}
+
+	if (name = "humano"){
+		var humanoSpawned = humano.clone();
+		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
+		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
+		humanoSpawned.position.x = xPosSpawn;
+		humanoSpawned.position.y = 0;
+		humanoSpawned.position.z = -5;
+		id++;
+		humanoSpawned.name = id;
+		humanos.push(humanoSpawned);		
+		scene.add(humanoSpawned);
+	}
 }
 
 function loadObjBases(objPath, texturePath, name) {
@@ -307,6 +352,16 @@ function loadObjBases(objPath, texturePath, name) {
 			object.scale.set(0.01,0.01,0.01);
 			bala = object.clone();
 		}
+
+		if(name == "jefeZombie"){
+			object.scale.set(0.024,0.024,0.024);
+			jefeZombie = object.clone();
+		}
+
+		if(name == "humano"){
+			object.scale.set(0.018,0.018,0.018);
+			humano = object.clone();
+		}
 		
 	}, onProgress, onError );
 }
@@ -345,13 +400,23 @@ function limpiarArreglos() {
 	balas = balas.filter(function( element ) {
 	   return element !== undefined;
 	});
+
+	jefesZombie = jefesZombie.filter(function( element ) {
+	   return element !== undefined;
+	});
+
+	vidaJefe = vidaJefe.filter(function( element ) {
+	   return element !== undefined;
+	});
+
+	humanos = humanos.filter(function( element ) {
+	   return element !== undefined;
+	});
 }
 
 function render() {
 	if(!gameover){
 	requestAnimationFrame(render);
-	
-	
 	
 	// Deteccion de colision bala-zombie
 	for (var i = 0; i < zombies.length; i++){
@@ -373,18 +438,71 @@ function render() {
 					    // Animation complete.
 					  });
 				  });
-
 			}	
 		}	
 	}
 
-	zombies = zombies.filter(function( element ) {
+	// Deteccion de colision bala-jefeZombie
+	for (var i = 0; i < jefesZombie.length; i++){
+		for (var j = 0; j < balas.length; j++){
+			if(jefesZombie[i].position.x == balas[j].position.x && jefesZombie[i].position.z >= balas[j].position.z){
+				 vidaJefe[i] -=1;
+				if (vidaJefe[i]<=0){
+					scene.remove(scene.getObjectByName(jefesZombie[i].name));
+					scene.remove(scene.getObjectByName(balas[j].name));
+					delete jefesZombie[i];
+					delete balas[j];
+					delete vidaJefe[j];
+					limpiarArreglos();
+					score+=30;
+					$(".numScore").text(score);
+					$( ".numScore" ).animate({
+					    fontSize: 40
+					  }, 25, function() {
+						    $( ".numScore" ).animate({
+						    fontSize: 30
+						  }, 25, function() {
+						    // Animation complete.
+						  });
+					  });
+				}
+			}	
+		}	
+	}
+
+	// Deteccion de colision bala-humano
+	for (var i = 0; i < humanos.length; i++){
+		for (var j = 0; j < balas.length; j++){
+			if(humanos[i].position.x == balas[j].position.x && humanos[i].position.z >= balas[j].position.z){
+				scene.remove(scene.getObjectByName(humanos[i].name));
+				scene.remove(scene.getObjectByName(balas[j].name));
+				delete humanos[i];
+				delete balas[j];
+				limpiarArreglos();
+				var vidaSize = $(".vida").css("width");
+				vidaSize = vidaSize.replace(/\D/g,'');
+				$(".vida").css("width", vidaSize - 3);
+			}	
+		}	
+	}
+
+	
+	/*zombies = zombies.filter(function( element ) {
 	   return element !== undefined;
 	});
 	
 	balas = balas.filter(function( element ) {
 	   return element !== undefined;
 	});
+
+	jefesZombie = jefesZombie.filter(function( element ) {
+	   return element !== undefined;
+	});
+
+	humanos = humanos.filter(function(element)){
+		return element !== undefined;
+	}
+	*/
 	
 	// Movimiento de zombies
 	for (var i = 0; i < zombies.length; i++){
@@ -396,76 +514,98 @@ function render() {
 			var vidaSize = $(".vida").css("width");
 			vidaSize = vidaSize.replace(/\D/g,'');
 			$(".vida").css("width", vidaSize - 1);
-
-
-			if((vidaSize - 1) <= 0) {
-
-				
-
-				 
-
-				if(localStorage.usuario === undefined || localStorage.usuario == ""){
-					swal({
-				  title: "GAME OVER",
-				  text: "Score: " + score,
-				  type: "input",
-				  showCancelButton: true,
-				  confirmButtonText: "PUBLICAR EN FACEBOOK",
-				  cancelButtonText: "Continuar",
-				  closeOnConfirm: false,
-				  inputPlaceholder: "Escribe tu nombre"
-				},
-				function(inputValue, isConfirm){
-					
-					if (inputValue === false) return false;
-  
-					  if (inputValue === "") {
-					    swal.showInputError("You need to write something!");
-
-					    return false
-					  } else{					  	
-					  	window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
-					  }
-
-					   localStorage.usuario = inputValue;
-					   window.location='index.html';
-				  	
-				});
-				}	else {
-
-					swal({
-				  title: "GAME OVER",
-				  text: "Usuario: " + localStorage.usuario + "/n Score: " + score,
-				  showCancelButton: true,
-				  confirmButtonText: "PUBLICAR EN FACEBOOK",
-				  cancelButtonText: "Continuar",
-				  closeOnConfirm: false,
-				},
-				function(isConfirm){
-					if (isConfirm) {
-					    window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
-					  } else {
-					    window.location='index.html';
-					  }				  	
-				});
-
-				}	
-
-					if(!gameover){
-					$.ajax({
-		      			type: "POST",
-							url: "http://proyectoaigc.netai.net/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
-		    			}).done(function(data) {
-		      				console.log(data);
-		    			});
-				}
-
-				gameover = true;
-				
-			}
-
-		}		
+		}
 	}
+
+	// Movimiento de jefesZombie
+	for (var i = 0; i < jefesZombie.length; i++){
+		if(jefesZombie[i].position.z < posZJugador - 1){
+			jefesZombie[i].position.z += 0.05;
+		}
+		
+		if(jefesZombie[i].position.z + 1 >= posZJugador){
+			var vidaSize = $(".vida").css("width");
+			vidaSize = vidaSize.replace(/\D/g,'');
+			$(".vida").css("width", vidaSize - 2);
+		}
+	}
+
+	// Movimiento de humanos
+	for (var i = 0; i < humanos.length; i++){
+		if(humanos[i].position.z < posZJugador - 1){
+			humanos[i].position.z += 0.05;
+		}
+		
+		if(humanos[i].position.z + 1 >= posZJugador){
+			var vidaSize = $(".vida").css("width");
+			vidaSize = vidaSize.replace(/\D/g,'');
+			$(".vida").css("width", vidaSize + 0.01);
+		}
+	}
+
+	if((vidaSize - 1) <= 0) {
+
+		if(localStorage.usuario === undefined || localStorage.usuario == ""){
+			swal({
+		  title: "GAME OVER",
+		  text: "Score: " + score,
+		  type: "input",
+		  showCancelButton: true,
+		  confirmButtonText: "PUBLICAR EN FACEBOOK",
+		  cancelButtonText: "Continuar",
+		  closeOnConfirm: false,
+		  inputPlaceholder: "Escribe tu nombre"
+		},
+		function(inputValue, isConfirm){
+			
+			if (inputValue === false) return false;
+
+			  if (inputValue === "") {
+			    swal.showInputError("You need to write something!");
+
+			    return false
+			  } else{					  	
+			  	window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+			  }
+
+			   localStorage.usuario = inputValue;
+			   window.location='index.html';
+		  	
+		});
+		}	else {
+
+			swal({
+		  title: "GAME OVER",
+		  text: "Usuario: " + localStorage.usuario + "/n Score: " + score,
+		  showCancelButton: true,
+		  confirmButtonText: "PUBLICAR EN FACEBOOK",
+		  cancelButtonText: "Continuar",
+		  closeOnConfirm: false,
+		},
+		function(isConfirm){
+			if (isConfirm) {
+			    window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+			  } else {
+			    window.location='index.html';
+			  }				  	
+		});
+
+		}	
+
+			if(!gameover){
+			$.ajax({
+      			type: "POST",
+					url: "http://proyectoaigc.netai.net/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
+    			}).done(function(data) {
+      				console.log(data);
+    			});
+		}
+
+		gameover = true;
+		
+	}
+
+
 	
 	// Impulso de la bala
 	for (var i = 0; i < balas.length; i++){
