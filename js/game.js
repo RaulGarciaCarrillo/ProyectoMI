@@ -29,15 +29,15 @@ var gameover = false;
 $(document).ready(function() {
 
 	(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8";
-    fjs.parentNode.insertBefore(js, fjs);
-  }
-  (document, 'script', 'facebook-jssdk')
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8";
+		fjs.parentNode.insertBefore(js, fjs);
+	}
+	(document, 'script', 'facebook-jssdk')
 
-);
+	);
 
 	var visibleSize = {
 		width: window.innerWidth,
@@ -115,22 +115,6 @@ $(document).ready(function() {
 
 		scene.add(object);
 	});*/
-
-	loadOBJWithMTL("assets/models/terreno/", "escenario.obj", "escenario.mtl", (object) => {
-		object.position.z = 0;
-		object.position.x = 0;
-		object.position.y = 0;
-		//object.scale.set(0.05,0.05,0.05);
-
-
-		object.scale.set(0.01,0.01,0.01);
-
-		objects.push(object);
-
-		scene.add(object);
-	});
-
-
 	/////////////////////////
 
 	function loadOBJWithMTL(path, objFile, mtlFile, onLoadCallback) {
@@ -162,24 +146,27 @@ $(document).ready(function() {
 	$("#scene-section").append(renderer.domElement);		
 	
  
-		render();
-	
-	
+	render();
+
 	setTimeout(spawnZombie, 2000);
-	setTimeout(spawnJefeZombie, 5000);
-	setTimeout(spawnHumano, 10000);
+	setTimeout(spawnJefeZombie, 10000);
+	setTimeout(spawnHumano, 7000);
+
+	
+
+
 	
 	$('body').mousedown(function(event) {
-	switch (event.which) {
-    case 1:
-        //alert('Left Mouse button pressed.');
-		spawnBullet();
-        break;
-    case 3:
-        //alert('Right Mouse button pressed.');
-        break;
-}
-});
+		switch (event.which) {
+	    case 1:
+	        //alert('Left Mouse button pressed.');
+			spawnBullet();
+	        break;
+	    case 3:
+	        //alert('Right Mouse button pressed.');
+	        break;
+		}
+	});
 	
 });
 
@@ -190,14 +177,19 @@ function spawnBullet() {
 
 function spawnZombie() {	
 	addModelByBase("zombie");
+	setTimeout(spawnZombie, 2000);
+
 }
 
 function spawnJefeZombie() {	
 	addModelByBase("jefeZombie");
+	setTimeout(spawnJefeZombie, 10000);
 }
 
 function spawnHumano() {	
 	addModelByBase("humano");
+	setTimeout(spawnHumano, 7000);
+
 }
 
 function de2ra(degree)   { 
@@ -283,7 +275,7 @@ function addModelByBase(name) {
 		scene.add(balaSpawned);
 	}
 
-	if (name = "jefeZombie"){
+	if (name == "jefeZombie"){
 		var jefeZombieSpawned = jefeZombie.clone();
 		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
 		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
@@ -297,7 +289,7 @@ function addModelByBase(name) {
 		scene.add(jefeZombieSpawned);
 	}
 
-	if (name = "humano"){
+	if (name == "humano"){
 		var humanoSpawned = humano.clone();
 		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
 		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
@@ -539,7 +531,8 @@ function render() {
 		if(humanos[i].position.z + 1 >= posZJugador){
 			var vidaSize = $(".vida").css("width");
 			vidaSize = vidaSize.replace(/\D/g,'');
-			$(".vida").css("width", vidaSize + 0.01);
+			var vida = Number(vidaSize) + 1;
+			$(".vida").css("width", vida);
 		}
 	}
 
