@@ -132,7 +132,6 @@ $(document).ready(function() {
 		});
 	}
 
-
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","zombie");
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","jefeZombie");
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","humano");
@@ -148,12 +147,9 @@ $(document).ready(function() {
  
 	render();
 
-	setTimeout(spawnZombie, 2000);
+	setTimeout(spawnZombie, 2500);
 	setTimeout(spawnJefeZombie, 10000);
-	setTimeout(spawnHumano, 7000);
-
-	
-
+	setTimeout(spawnHumano, 12000);
 
 	
 	$('body').mousedown(function(event) {
@@ -439,7 +435,7 @@ function render() {
 		for (var j = 0; j < balas.length; j++){
 			if(jefesZombie[i].position.x == balas[j].position.x && jefesZombie[i].position.z >= balas[j].position.z){
 				 vidaJefe[i] -=1;
-				if (vidaJefe[i]<=0){
+				if (vidaJefe[i]==0){
 					scene.remove(scene.getObjectByName(jefesZombie[i].name));
 					scene.remove(scene.getObjectByName(balas[j].name));
 					delete jefesZombie[i];
@@ -457,6 +453,11 @@ function render() {
 						    // Animation complete.
 						  });
 					  });
+				} else {
+					scene.remove(scene.getObjectByName(balas[j].name));
+					delete balas[j];
+					limpiarArreglos();
+
 				}
 			}	
 		}	
@@ -473,7 +474,7 @@ function render() {
 				limpiarArreglos();
 				var vidaSize = $(".vida").css("width");
 				vidaSize = vidaSize.replace(/\D/g,'');
-				$(".vida").css("width", vidaSize - 3);
+				$(".vida").css("width", vidaSize - 25);
 			}	
 		}	
 	}
@@ -531,8 +532,11 @@ function render() {
 		if(humanos[i].position.z + 1 >= posZJugador){
 			var vidaSize = $(".vida").css("width");
 			vidaSize = vidaSize.replace(/\D/g,'');
-			var vida = Number(vidaSize) + 1;
+			var vida = Number(vidaSize) + 20;
 			$(".vida").css("width", vida);
+			scene.remove(scene.getObjectByName(humanos[i].name));
+			delete humanos[i];
+			limpiarArreglos();
 		}
 	}
 
