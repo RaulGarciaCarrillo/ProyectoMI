@@ -147,6 +147,24 @@ $(document).ready(function() {
  
 	render();
 
+
+	$("body").on("keypress", function (e) {
+		 if(!gameover) gameover = true;
+		//gameover = true;
+    			/*swal({
+		  title: "Pausa",
+		  confirmButtonText: "Continuar"
+		},
+		function(isConfirm){
+			 swal("Deleted!", "Your imaginary file has been deleted.", "success");
+			gameover = false;
+		  	
+		} );
+		*/
+
+ 	});
+
+
 	setTimeout(spawnZombie, 2500);
 	setTimeout(spawnJefeZombie, 10000);
 	setTimeout(spawnHumano, 12000);
@@ -403,6 +421,7 @@ function limpiarArreglos() {
 }
 
 function render() {
+
 	if(!gameover){
 	requestAnimationFrame(render);
 	
