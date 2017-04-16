@@ -11,6 +11,7 @@ var humanos = [];
 var jefesZombie = []; 
 var vidaJefe = [];
 var balas = [];
+var bombas = [];
 var posXJugador = 1;
 var posYJugador = 0;
 var posZJugador = 15;
@@ -23,6 +24,8 @@ var zombie;
 var bala;
 var jefeZombie;
 var humano;
+var bomba;
+var cantidadBombas = 3;
 var objects = [];
 var gameover = false;
 
@@ -128,7 +131,7 @@ $(document).ready(function() {
 			objLoader.load(objFile, (object) => {
 				onLoadCallback(object);
 			});
-
+			
 		});
 	}
 
@@ -136,6 +139,7 @@ $(document).ready(function() {
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","jefeZombie");
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","humano");
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bala");
+	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bomba");
 
 	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
 	scene.add(ambientLight);
@@ -147,27 +151,40 @@ $(document).ready(function() {
  
 	render();
 
-
-	$("body").on("keypress", function (e) {
-		 if(!gameover) gameover = true;
-		//gameover = true;
-    			/*swal({
-		  title: "Pausa",
-		  confirmButtonText: "Continuar"
-		},
-		function(isConfirm){
-			 swal("Deleted!", "Your imaginary file has been deleted.", "success");
-			gameover = false;
-		  	
-		} );
-		*/
-
- 	});
-
+ 	$("body").on("keypress", function (e) {
+ 		$(".numScore").text(e.keyCode);
+ 		//Tecla "b"
+    	if (e.keyCode==98){
+    		if (cantidadBombas > 0){
+    			spawnBomba();
+    			cantidadBombas -= 1;
+    		}
+    	}
+    	//Tecla "p"
+    	if (e.keyCode==112){
+	    	 //if(!gameover) gameover = true;
+			//gameover = true;
+	    			/*swal({
+			  title: "Pausa",
+			  confirmButtonText: "Continuar"
+			},
+			function(isConfirm){
+				 swal("Deleted!", "Your imaginary file has been deleted.", "success");
+				gameover = false;
+			  	
+			} );
+			*/
+		}
+	});
 
 	setTimeout(spawnZombie, 2500);
 	setTimeout(spawnJefeZombie, 10000);
 	setTimeout(spawnHumano, 12000);
+
+	/*$("body").on("keypress", function (b) {
+		spawnBomba();
+
+ 	}); */
 
 	
 	$('body').mousedown(function(event) {
@@ -187,6 +204,10 @@ $(document).ready(function() {
 //Spawn Models
 function spawnBullet() {
 	addModelByBase("bala");
+}
+
+function spawnBomba() {
+	addModelByBase("bomba");
 }
 
 function spawnZombie() {	
@@ -289,6 +310,17 @@ function addModelByBase(name) {
 		scene.add(balaSpawned);
 	}
 
+	if(name == "bomba") {
+		var bombaSpawned = bomba.clone();		
+		bombaSpawned.position.x = posXJugador;
+		bombaSpawned.position.y = posYJugador;
+		bombaSpawned.position.z = posZJugador;
+		id++;
+		bombaSpawned.name = id;
+		bombas.push(bombaSpawned);		
+		scene.add(bombaSpawned);
+	}
+
 	if (name == "jefeZombie"){
 		var jefeZombieSpawned = jefeZombie.clone();
 		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
@@ -359,6 +391,11 @@ function loadObjBases(objPath, texturePath, name) {
 			bala = object.clone();
 		}
 
+		if(name == "bomba"){
+			object.scale.set(0.02,0.02,0.02);
+			bomba = object.clone();
+		}
+
 		if(name == "jefeZombie"){
 			object.scale.set(0.024,0.024,0.024);
 			jefeZombie = object.clone();
@@ -404,6 +441,10 @@ function limpiarArreglos() {
 	});
 	
 	balas = balas.filter(function( element ) {
+	   return element !== undefined;
+	});
+
+	bombas = bombas.filter(function( element ) {
 	   return element !== undefined;
 	});
 
@@ -621,8 +662,6 @@ function render() {
 		
 	}
 
-
-	
 	// Impulso de la bala
 	for (var i = 0; i < balas.length; i++){
 		if(balas[i].position.z < -5){
@@ -632,7 +671,19 @@ function render() {
 		}else{
 			balas[i].position.z -= 2;
 		}		
-	}			
+	}	
+
+	// Impulso de la bomba
+	for (var i = 0; i < bombas.length; i++){
+		if(bombas[i].position.z < -5){
+			scene.remove(scene.getObjectByName(bombas[i].name));
+			delete bombas[i];
+			limpiarArreglos();
+		}else{
+			bombas[i].position.z -= 4;
+		}		
+	}		
+
 	sky.rotation.y += 0.0005;
 	document.addEventListener('keydown',onDocumentKeyDown,false);
 	function onDocumentKeyDown(event){
