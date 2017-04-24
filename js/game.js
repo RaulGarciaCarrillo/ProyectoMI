@@ -19,7 +19,8 @@ var fired = false;
 var vida = 100;
 var id = 0;
 var score = 0;
-var jugador;
+var auxScore = 0;
+var jugador
 var zombie;
 var bala;
 var jefeZombie;
@@ -28,8 +29,17 @@ var bomba;
 var cantidadBombas = 3;
 var objects = [];
 var gameover = false;
+var pausa = false;
 
 $(document).ready(function() {
+
+	window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1850974661823696',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+  };
 
 	(function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0];
@@ -146,13 +156,12 @@ $(document).ready(function() {
 	scene.add(directionalLight);
 
 	//agregamos el canvas
-	$("#scene-section").append(renderer.domElement);		
-	
- 
-	render();
+	$("#scene-section").append(renderer.domElement);	
+
+	render();	
 
  	$("body").on("keypress", function (e) {
- 		$(".numScore").text(e.keyCode);
+ 		//$(".numScore").text(e.keyCode);
  		//Tecla "b"
     	if (e.keyCode==98){
     		if (cantidadBombas > 0){
@@ -162,30 +171,19 @@ $(document).ready(function() {
     	}
     	//Tecla "p"
     	if (e.keyCode==112){
-	    	 //if(!gameover) gameover = true;
-			//gameover = true;
-	    			/*swal({
-			  title: "Pausa",
-			  confirmButtonText: "Continuar"
-			},
-			function(isConfirm){
-				 swal("Deleted!", "Your imaginary file has been deleted.", "success");
-				gameover = false;
-			  	
-			} );
-			*/
+    		//window.location="pause.html";
+			gameover = true;
+		}
+		//Tecla "q"
+		if (e.keyCode==113){
+			gameover = false;
+			render();
 		}
 	});
 
 	setTimeout(spawnZombie, 2500);
 	setTimeout(spawnJefeZombie, 10000);
 	setTimeout(spawnHumano, 12000);
-
-	/*$("body").on("keypress", function (b) {
-		spawnBomba();
-
- 	}); */
-
 	
 	$('body').mousedown(function(event) {
 		switch (event.which) {
@@ -465,6 +463,12 @@ function render() {
 
 	if(!gameover){
 	requestAnimationFrame(render);
+
+	//Aumento de número de bombas
+	if (auxScore>=150){
+		cantidadBombas+=1;
+		auxScore=0;
+	}
 	
 	// Deteccion de colision bala-zombie
 	for (var i = 0; i < zombies.length; i++){
@@ -476,6 +480,7 @@ function render() {
 				delete balas[j];
 				limpiarArreglos();
 				score+=10;
+				auxScore+=10;
 				$(".numScore").text(score);
 				$( ".numScore" ).animate({
 				    fontSize: 40
@@ -503,6 +508,7 @@ function render() {
 					delete vidaJefe[j];
 					limpiarArreglos();
 					score+=30;
+					auxScore+=30;
 					$(".numScore").text(score);
 					$( ".numScore" ).animate({
 					    fontSize: 40
@@ -537,6 +543,36 @@ function render() {
 				$(".vida").css("width", vidaSize - 25);
 			}	
 		}	
+	}
+
+		// Deteccion de colision bomba-zombie
+	for (var i = 0; i < zombies.length; i++){
+		for (var j = 0; j < bombas.length; j++){
+			//if(zombies[i].position.x == bombas[j].position.x && zombies[i].position.z >= (bombas[j].position.z - 10)){
+			if((zombies[i].position.x >= (bombas[j].position.x - 2.5) && zombies[i].position.x <= (bombas[j].position.x + 2.5) || zombies[i].position.x == bombas[j].position.x) && zombies[i].position.z >= (bombas[j].position.z - 2)){
+				scene.remove(scene.getObjectByName(zombies[i].name));
+				scene.remove(scene.getObjectByName(bombas[j].name));
+				delete zombies[i];
+			}	
+		}	
+		delete bombas[j];
+		limpiarArreglos();
+	}
+	
+
+	// Deteccion de colision bomba-jefeZombie
+	for (var i = 0; i < jefesZombie.length; i++){
+		for (var j = 0; j < bombas.length; j++){
+			//if(jefesZombie[i].position.x == bombas[j].position.x && jefesZombie[i].position.z >= (bombas[j].position.z - 10)){
+			if((jefesZombie[i].position.x >= (bombas[j].position.x - 2.5) && jefesZombie[i].position.x <= (bombas[j].position.x + 2.5) || jefesZombie[i].position.x == bombas[j].position.x) && jefesZombie[i].position.z >= (bombas[j].position.z - 2)){
+				scene.remove(scene.getObjectByName(jefesZombie[i].name));
+				scene.remove(scene.getObjectByName(bombas[j].name));
+				delete jefesZombie[i];
+				delete vidaJefe[j];
+			}	
+		}
+		delete bombas[j];	
+		limpiarArreglos();
 	}
 
 	
@@ -582,6 +618,7 @@ function render() {
 			$(".vida").css("width", vidaSize - 2);
 		}
 	}
+	
 
 	// Movimiento de humanos
 	for (var i = 0; i < humanos.length; i++){
@@ -621,8 +658,16 @@ function render() {
 			    swal.showInputError("You need to write something!");
 
 			    return false
-			  } else{					  	
-			  	window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+			  } else{	
+			  	    FB.ui({
+			        method: 'share',
+			        picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'http://miadventure.x10.mx/',
+			        caption: 'Dead Hunting',
+			        quote: "My Score: " + score,
+			        hashtag: "#MiAdventure"
+			      }, function(response){});				  	
+			  	//window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
 			  }
 
 			   localStorage.usuario = inputValue;
@@ -633,7 +678,8 @@ function render() {
 
 			swal({
 		  title: "GAME OVER",
-		  text: "Usuario: " + localStorage.usuario + "/n Score: " + score,
+		  text: "Usuario: " + localStorage.usuario + " <br/> Score: " + score,
+		  html: true,
 		  showCancelButton: true,
 		  confirmButtonText: "PUBLICAR EN FACEBOOK",
 		  cancelButtonText: "Continuar",
@@ -641,7 +687,15 @@ function render() {
 		},
 		function(isConfirm){
 			if (isConfirm) {
-			    window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+			    //window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+			     FB.ui({
+			        method: 'share',
+			        picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'http://miadventure.x10.mx/',
+			        caption: 'Dead Hunting',
+			        quote: "My Score: " + score,
+			        hashtag: "#MiAdventure"
+			      }, function(response){});			
 			  } else {
 			    window.location='index.html';
 			  }				  	
