@@ -5,10 +5,10 @@
 .vida {
     top: 15px;
     left: 15px;
-    position: absolute;
 	background: red;
 	width: 500px;
 	height: 20px;
+    
 }
 
 .score {
@@ -33,4 +33,14 @@
     padding-top: 8px;
 	font-size: 30px;
     display: inline-block;
+}
+
+.bordeVida {
+    border: 2px solid black;
+    width: 500px;
+    height: 20px;
+    background: white;
+    top: 15px;
+    left: 15px;
+    position: absolute;
 }

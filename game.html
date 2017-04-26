@@ -3,6 +3,7 @@
 	<title>Dead Hunting</title>
 	<link rel="stylesheet" href="css/game.css">
 	<link rel="stylesheet" href="js/sweetalert-master/sweetalert.css">
+	<link rel="stylesheet" href="css/pause.css">
 	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript" src="js/three.js"></script>
 	<script src="http://mamboleoo.be/learnThree/demos/OBJLoader.js"></script>
@@ -18,9 +19,16 @@
 	</style>
 </head>
 <body>
-	<div id="scene-section"/>
-	<div class="vida"></div>
-	<div class="score">Score<div class="numScore"></div></div>
-
+	<div class="juego" style="display: flex;">
+		<div id="scene-section"></div>
+		<div class="bordeVida"><div class="vida"></div></div>
+		<div class="score">Score<div class="numScore"></div></div>
+	</div>
+	<div class="pausa" style="display: none;">
+		<div class="titulo"><img src="imagenes/Pause.png"></div>
+		<div class="menu" onclick="window.location='game.html';">CONTINUAR</div>
+		<div class="menu" onclick="window.location='opciones.html';">OPCIONES</div>
+		<div class="menu" onclick="window.location='index.html';">SALIR</div>			
+	</div>
 </body>
 </html>

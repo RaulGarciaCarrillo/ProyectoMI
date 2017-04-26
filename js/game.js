@@ -146,9 +146,9 @@ $(document).ready(function() {
 	}
 
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","zombie");
-	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","jefeZombie");
-	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","humano");
-	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bala");
+	loadObjBases("assets/models/Monster/Monster.obj","assets/models/Monster/Monster.jpg","jefeZombie");
+	loadObjBases("assets/models/Human/Human.obj","assets/models/Human/Human.jpg","humano");
+	loadObjBases("assets/models/bullet/bullet.obj","assets/models/bullet/bullet.jpg","bala");
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bomba");
 
 	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
@@ -173,9 +173,14 @@ $(document).ready(function() {
     	if (e.keyCode==112){
     		//window.location="pause.html";
 			gameover = true;
+			$(".juego").css("display","none");
+			$(".pausa").css("display","block");
+
 		}
 		//Tecla "q"
 		if (e.keyCode==113){
+			$(".juego").css("display","flex");
+			$(".pausa").css("display","none");
 			gameover = false;
 			render();
 		}
@@ -300,7 +305,7 @@ function addModelByBase(name) {
 	if(name == "bala") {
 		var balaSpawned = bala.clone();		
 		balaSpawned.position.x = posXJugador;
-		balaSpawned.position.y = posYJugador;
+		balaSpawned.position.y = posYJugador+1;
 		balaSpawned.position.z = posZJugador;
 		id++;
 		balaSpawned.name = id;
@@ -395,12 +400,12 @@ function loadObjBases(objPath, texturePath, name) {
 		}
 
 		if(name == "jefeZombie"){
-			object.scale.set(0.024,0.024,0.024);
+			object.scale.set(0.003,0.003,0.003);
 			jefeZombie = object.clone();
 		}
 
 		if(name == "humano"){
-			object.scale.set(0.018,0.018,0.018);
+			//object.scale.set(0.018,0.018,0.018);
 			humano = object.clone();
 		}
 		
@@ -539,7 +544,7 @@ function render() {
 				delete balas[j];
 				limpiarArreglos();
 				var vidaSize = $(".vida").css("width");
-				vidaSize = vidaSize.replace(/\D/g,'');
+				vidaSize = vidaSize.replace('px','');
 				$(".vida").css("width", vidaSize - 25);
 			}	
 		}	
@@ -601,8 +606,11 @@ function render() {
 		
 		if(zombies[i].position.z + 1 >= posZJugador){
 			var vidaSize = $(".vida").css("width");
-			vidaSize = vidaSize.replace(/\D/g,'');
-			$(".vida").css("width", vidaSize - 1);
+			vidaSize = vidaSize.replace('px','');
+			vidaSize = Number(vidaSize) -1;
+			$(".vida").css("width", vidaSize);
+
+			
 		}
 	}
 
@@ -614,7 +622,7 @@ function render() {
 		
 		if(jefesZombie[i].position.z + 1 >= posZJugador){
 			var vidaSize = $(".vida").css("width");
-			vidaSize = vidaSize.replace(/\D/g,'');
+			vidaSize = vidaSize.replace('px','');
 			$(".vida").css("width", vidaSize - 2);
 		}
 	}
@@ -628,7 +636,7 @@ function render() {
 		
 		if(humanos[i].position.z + 1 >= posZJugador){
 			var vidaSize = $(".vida").css("width");
-			vidaSize = vidaSize.replace(/\D/g,'');
+			vidaSize = vidaSize.replace('px','');
 			var vida = Number(vidaSize) + 20;
 			$(".vida").css("width", vida);
 			scene.remove(scene.getObjectByName(humanos[i].name));
