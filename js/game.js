@@ -37,7 +37,7 @@ $(document).ready(function() {
     FB.init({
       appId      : '1850974661823696',
       xfbml      : true,
-      version    : 'v2.8'
+      version    : 'v2.9'
     });
   };
 
@@ -45,7 +45,7 @@ $(document).ready(function() {
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) return;
 		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8";
+		js.src = "//connect.facebook.net/en_US/sdk.js";
 		fjs.parentNode.insertBefore(js, fjs);
 	}
 	(document, 'script', 'facebook-jssdk')
@@ -184,6 +184,13 @@ $(document).ready(function() {
 			gameover = false;
 			render();
 		}
+	});
+
+	$("#Pausa").click(function(){
+		$(".juego").css("display","flex");
+		$(".pausa").css("display","none");
+		gameover = false;
+		render();
 	});
 
 	setTimeout(spawnZombie, 2500);
@@ -669,11 +676,11 @@ function render() {
 			  } else{	
 			  	    FB.ui({
 			        method: 'share',
-			        picture:'http://miadventure.x10.mx/portadaMI2.png',
-			        href:'http://miadventure.x10.mx/',
-			        caption: 'Dead Hunting',
-			        quote: "My Score: " + score,
-			        hashtag: "#MiAdventure"
+			        //picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'https://google.com',
+			        //caption: 'Dead Hunting',
+			        quote: "Mi puntaje: " + score,
+			        hashtag: "#DeadHunting"
 			      }, function(response){});				  	
 			  	//window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
 			  }
@@ -698,11 +705,11 @@ function render() {
 			    //window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
 			     FB.ui({
 			        method: 'share',
-			        picture:'http://miadventure.x10.mx/portadaMI2.png',
-			        href:'http://miadventure.x10.mx/',
-			        caption: 'Dead Hunting',
-			        quote: "My Score: " + score,
-			        hashtag: "#MiAdventure"
+			        //picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'https://google.com',
+			        //caption: 'Dead Hunting',
+			        quote: "Mi puntaje: " + score,
+			        hashtag: "#DeadHunting"
 			      }, function(response){});			
 			  } else {
 			    window.location='index.html';
