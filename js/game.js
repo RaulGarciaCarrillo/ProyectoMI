@@ -30,6 +30,7 @@ var cantidadBombas = 3;
 var objects = [];
 var gameover = false;
 var pausa = false;
+var vidaLimite = 500;
 
 $(document).ready(function() {
 
@@ -171,7 +172,6 @@ $(document).ready(function() {
     	}
     	//Tecla "p"
     	if (e.keyCode==112){
-    		//window.location="pause.html";
 			gameover = true;
 			$(".juego").css("display","none");
 			$(".pausa").css("display","block");
@@ -267,7 +267,6 @@ function addModel(objPath, texturePath, name){
 	} );
 
 	// model
-
 	var loader = new THREE.OBJLoader( manager );
 	loader.load( objPath, function ( object ) {
 
@@ -562,6 +561,7 @@ function render() {
 		for (var j = 0; j < bombas.length; j++){
 			//if(zombies[i].position.x == bombas[j].position.x && zombies[i].position.z >= (bombas[j].position.z - 10)){
 			if((zombies[i].position.x >= (bombas[j].position.x - 2.5) && zombies[i].position.x <= (bombas[j].position.x + 2.5) || zombies[i].position.x == bombas[j].position.x) && zombies[i].position.z >= (bombas[j].position.z - 2)){
+				bombas[j].scale.set(2.0,2.0,2.0);
 				scene.remove(scene.getObjectByName(zombies[i].name));
 				scene.remove(scene.getObjectByName(bombas[j].name));
 				delete zombies[i];
@@ -577,6 +577,7 @@ function render() {
 		for (var j = 0; j < bombas.length; j++){
 			//if(jefesZombie[i].position.x == bombas[j].position.x && jefesZombie[i].position.z >= (bombas[j].position.z - 10)){
 			if((jefesZombie[i].position.x >= (bombas[j].position.x - 2.5) && jefesZombie[i].position.x <= (bombas[j].position.x + 2.5) || jefesZombie[i].position.x == bombas[j].position.x) && jefesZombie[i].position.z >= (bombas[j].position.z - 2)){
+				bombas[j].scale.set(2.0,0.0,2.0);
 				scene.remove(scene.getObjectByName(jefesZombie[i].name));
 				scene.remove(scene.getObjectByName(bombas[j].name));
 				delete jefesZombie[i];
@@ -645,6 +646,9 @@ function render() {
 			var vidaSize = $(".vida").css("width");
 			vidaSize = vidaSize.replace('px','');
 			var vida = Number(vidaSize) + 20;
+			if (vida>= vidaLimite){
+				vida= vidaLimite;	
+			}
 			$(".vida").css("width", vida);
 			scene.remove(scene.getObjectByName(humanos[i].name));
 			delete humanos[i];
