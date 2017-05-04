@@ -30,6 +30,7 @@ var cantidadBombas = 3;
 var objects = [];
 var gameover = false;
 var pausa = false;
+<<<<<<< HEAD
 var anguloBomba = 20;
 var dialog, dialog2, form;
 
@@ -92,6 +93,9 @@ function ExplodeAnimation(x,y,z)
   }
   
 }
+=======
+var vidaLimite = 500;
+>>>>>>> origin/master
 
 $(document).ready(function() {
 
@@ -105,7 +109,7 @@ $(document).ready(function() {
     FB.init({
       appId      : '1850974661823696',
       xfbml      : true,
-      version    : 'v2.8'
+      version    : 'v2.9'
     });
   };
 
@@ -113,7 +117,7 @@ $(document).ready(function() {
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) return;
 		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8";
+		js.src = "//connect.facebook.net/en_US/sdk.js";
 		fjs.parentNode.insertBefore(js, fjs);
 	}
 	(document, 'script', 'facebook-jssdk')
@@ -339,7 +343,6 @@ $(document).ready(function() {
     	}
     	//Tecla "p"
     	if (e.keyCode==112){
-    		//window.location="pause.html";
 			gameover = true;
 			$(".juego").css("display","none");
 			$(".pausa").css("display","block");
@@ -352,6 +355,13 @@ $(document).ready(function() {
 			gameover = false;
 			render();
 		}
+	});
+
+	$("#Pausa").click(function(){
+		$(".juego").css("display","flex");
+		$(".pausa").css("display","none");
+		gameover = false;
+		render();
 	});
 
 	setTimeout(spawnZombie, 2500);
@@ -432,7 +442,6 @@ function addModel(objPath, texturePath, name){
 	} );
 
 	// model
-
 	var loader = new THREE.OBJLoader( manager );
 	loader.load( objPath, function ( object ) {
 
@@ -746,12 +755,18 @@ function render() {
 		// Deteccion de colision bomba-zombie
 	for (var i = 0; i < zombies.length; i++){
 		for (var j = 0; j < bombas.length; j++){
+<<<<<<< HEAD
 			
 			var distancia = Math.sqrt(Math.pow((bombas[j].position.x - zombies[i].position.x), 2) + Math.pow((bombas[j].position.y - zombies[i].position.y), 2) + Math.pow((bombas[j].position.z - zombies[i].position.z), 2)); 
 
 			if(bombas[j].position.y <= 1 
 				&& distancia <= 6
 				&& anguloBomba > 160){
+=======
+			//if(zombies[i].position.x == bombas[j].position.x && zombies[i].position.z >= (bombas[j].position.z - 10)){
+			if((zombies[i].position.x >= (bombas[j].position.x - 2.5) && zombies[i].position.x <= (bombas[j].position.x + 2.5) || zombies[i].position.x == bombas[j].position.x) && zombies[i].position.z >= (bombas[j].position.z - 2)){
+				bombas[j].scale.set(2.0,2.0,2.0);
+>>>>>>> origin/master
 				scene.remove(scene.getObjectByName(zombies[i].name));
 				scene.remove(scene.getObjectByName(bombas[j].name));
 
@@ -771,12 +786,18 @@ function render() {
 	// Deteccion de colision bomba-jefeZombie
 	for (var i = 0; i < jefesZombie.length; i++){
 		for (var j = 0; j < bombas.length; j++){
+<<<<<<< HEAD
 				
 			var distancia = Math.sqrt(Math.pow((bombas[j].position.x - jefesZombie[i].position.x), 2) + Math.pow((bombas[j].position.y - jefesZombie[i].position.y), 2) + Math.pow((bombas[j].position.z - jefesZombie[i].position.z), 2)); 
 
 			if(bombas[j].position.y <= 1 
 				&& distancia <= 6
 				 && anguloBomba > 160){
+=======
+			//if(jefesZombie[i].position.x == bombas[j].position.x && jefesZombie[i].position.z >= (bombas[j].position.z - 10)){
+			if((jefesZombie[i].position.x >= (bombas[j].position.x - 2.5) && jefesZombie[i].position.x <= (bombas[j].position.x + 2.5) || jefesZombie[i].position.x == bombas[j].position.x) && jefesZombie[i].position.z >= (bombas[j].position.z - 2)){
+				bombas[j].scale.set(2.0,0.0,2.0);
+>>>>>>> origin/master
 				scene.remove(scene.getObjectByName(jefesZombie[i].name));
 				scene.remove(scene.getObjectByName(bombas[j].name));
 				delete jefesZombie[i];
@@ -832,6 +853,9 @@ function render() {
 			var vidaSize = $(".vida").css("width");
 			vidaSize = vidaSize.replace('px','');
 			var vida = Number(vidaSize) + 20;
+			if (vida>= vidaLimite){
+				vida= vidaLimite;	
+			}
 			$(".vida").css("width", vida);
 			scene.remove(scene.getObjectByName(humanos[i].name));
 			delete humanos[i];
@@ -862,11 +886,11 @@ function render() {
 			  } else{	
 			  	    FB.ui({
 			        method: 'share',
-			        picture:'http://miadventure.x10.mx/portadaMI2.png',
-			        href:'http://miadventure.x10.mx/',
-			        caption: 'Dead Hunting',
-			        quote: "My Score: " + score,
-			        hashtag: "#MiAdventure"
+			        //picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'https://google.com',
+			        //caption: 'Dead Hunting',
+			        quote: "Mi puntaje: " + score,
+			        hashtag: "#DeadHunting"
 			      }, function(response){});				  	
 			  	//window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
 			  }
@@ -877,7 +901,36 @@ function render() {
 		});
 		}	else {
 
+<<<<<<< HEAD
 		}	*/
+=======
+			swal({
+		  title: "GAME OVER",
+		  text: "Usuario: " + localStorage.usuario + " <br/> Score: " + score,
+		  html: true,
+		  showCancelButton: true,
+		  confirmButtonText: "PUBLICAR EN FACEBOOK",
+		  cancelButtonText: "Continuar",
+		  closeOnConfirm: false,
+		},
+		function(isConfirm){
+			if (isConfirm) {
+			    //window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
+			     FB.ui({
+			        method: 'share',
+			        //picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'https://google.com',
+			        //caption: 'Dead Hunting',
+			        quote: "Mi puntaje: " + score,
+			        hashtag: "#DeadHunting"
+			      }, function(response){});			
+			  } else {
+			    window.location='index.html';
+			  }				  	
+		});
+
+		}	
+>>>>>>> origin/master
 
 		if(localStorage.usuario === undefined || localStorage.usuario == ""){
 			dialog2.dialog( "open" );
