@@ -30,8 +30,76 @@ var cantidadBombas = 3;
 var objects = [];
 var gameover = false;
 var pausa = false;
+var anguloBomba = 20;
+var dialog, dialog2, form;
+
+
+//////////////settings/////////
+var movementSpeed = 1;
+var totalObjects = 800;
+var objectSize = 0.04;
+var sizeRandomness = 1;
+var colors = [0x660000];
+/////////////////////////////////
+var dirs = [];
+var parts = [];
+
+
+function ExplodeAnimation(x,y,z)
+{
+  var geometry = new THREE.Geometry();
+  
+  for (i = 0; i < totalObjects; i ++) 
+  { 
+    var vertex = new THREE.Vector3();
+    vertex.x = x;
+    vertex.y = y;
+    vertex.z = z;
+  
+    geometry.vertices.push( vertex );
+    dirs.push({
+    	x:(Math.random() * movementSpeed)-(movementSpeed/2),
+    	y:(Math.random() * movementSpeed)-(movementSpeed/2),
+    	z:(Math.random() * movementSpeed)-(movementSpeed/2)
+    });
+  }
+  var material = new THREE.ParticleBasicMaterial({ 
+  	size: objectSize,  
+  	color: colors[0] 
+  });
+  var particles = new THREE.ParticleSystem( geometry, material );
+  
+  this.object = particles;
+  this.status = true;
+  
+  this.xDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  this.yDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  this.zDir = (Math.random() * movementSpeed)-(movementSpeed/2);
+  
+  scene.add( this.object  ); 
+  
+  this.update = function(){
+    if (this.status == true){
+      var pCount = totalObjects;
+      while(pCount--) {
+        var particle =  this.object.geometry.vertices[pCount]
+        particle.y += dirs[pCount].y;
+        particle.x += dirs[pCount].x;
+        particle.z += dirs[pCount].z;
+      }
+      this.object.geometry.verticesNeedUpdate = true;
+    }
+  }
+  
+}
 
 $(document).ready(function() {
+
+	var audio = new Audio('audio/ambiente.mp3');
+	audio.play();
+
+	$(".numBombas").empty();
+	$(".numBombas").append("x " + cantidadBombas);
 
 	window.fbAsyncInit = function() {
     FB.init({
@@ -51,6 +119,98 @@ $(document).ready(function() {
 	(document, 'script', 'facebook-jssdk')
 
 	);
+
+
+	$("#scoreModal").append("Score: " + score);
+
+		$(function () {
+		dialog = $( "#dialog-form" ).dialog({
+		      autoOpen: false,
+		      height: 400,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		        COMPARTIR: function() {
+		          var name = $("#name").val();
+		          localStorage.usuario = name;
+		          $.ajax({
+	      				type: "POST",
+						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+	    			}).done(function(data) {
+	      				console.log(data);
+	    			});
+	    			dialog.dialog( "close" );
+	    			FB.ui({
+			        method: 'share',
+			        picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'http://miadventure.x10.mx/',
+			        caption: 'Dead Hunting',
+			        quote: "My Score: " + score,
+			        hashtag: "#MiAdventure"
+			      }, function(response){});
+			      dialog.dialog( "close" );		
+		        },
+		        CONTINUAR: function() {
+		          var name = $("#name").val();
+		          localStorage.usuario = name;
+		          $.ajax({
+	      				type: "POST",
+						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+	    			}).done(function(data) {
+	      				console.log(data);
+	    			});
+	    			dialog.dialog( "close" );
+		        }
+		      },
+		      close: function() {
+		      }
+		    });
+
+		dialog2 = $( "#dialog-form2" ).dialog({
+		      autoOpen: false,
+		      height: 400,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		        COMPARTIR: function() {
+		          var name = $("#name").val();
+		          localStorage.usuario = name;
+		          $.ajax({
+	      				type: "POST",
+						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+	    			}).done(function(data) {
+	      				console.log(data);
+	    			});
+	    			dialog.dialog( "close" );
+	    			FB.ui({
+			        method: 'share',
+			        picture:'http://miadventure.x10.mx/portadaMI2.png',
+			        href:'http://miadventure.x10.mx/',
+			        caption: 'Dead Hunting',
+			        quote: "My Score: " + score,
+			        hashtag: "#MiAdventure"
+			      }, function(response){});
+			      dialog2.dialog( "close" );		
+		        },
+		        CONTINUAR: function() {
+		          var name = $("#name").val();
+		          localStorage.usuario = name;
+		          $.ajax({
+	      				type: "POST",
+						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+	    			}).done(function(data) {
+	      				console.log(data);
+	    			});
+	    			dialog2.dialog( "close" );
+		        }
+		      },
+		      close: function() {
+		      }
+		    });
+	});
+ 
+
+
 
 	var visibleSize = {
 		width: window.innerWidth,
@@ -84,6 +244,8 @@ $(document).ready(function() {
 	renderer.shadowMapDarkness =1;
 	renderer.shadowMapWidth = 1024;
 	renderer.shadowMapHeight = 1024;
+
+	
 
 	// Luces
 	initLights();		
@@ -148,8 +310,9 @@ $(document).ready(function() {
 	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","zombie");
 	loadObjBases("assets/models/Monster/Monster.obj","assets/models/Monster/Monster.jpg","jefeZombie");
 	loadObjBases("assets/models/Human/Human.obj","assets/models/Human/Human.jpg","humano");
-	loadObjBases("assets/models/bullet/bullet.obj","assets/models/bullet/bullet.jpg","bala");
-	loadObjBases("assets/models/zombie/zombie.obj","assets/models/zombie/draugr.jpg","bomba");
+	loadObjBases("assets/models/bullet/bullet.obj","assets/models/bullet/bullet.png","bala");
+
+	loadObjBases("assets/models/Bomb/Bomb.obj","assets/models/Bomb/Bomb.png","bomba");
 
 	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
 	scene.add(ambientLight);
@@ -165,8 +328,13 @@ $(document).ready(function() {
  		//Tecla "b"
     	if (e.keyCode==98){
     		if (cantidadBombas > 0){
-    			spawnBomba();
+    			
+    				
+    			spawnBomba();    			
+    			anguloBomba = 20;
     			cantidadBombas -= 1;
+    			$(".numBombas").empty();
+				$(".numBombas").append("x " + cantidadBombas);
     		}
     	}
     	//Tecla "p"
@@ -207,9 +375,13 @@ $(document).ready(function() {
 //Spawn Models
 function spawnBullet() {
 	addModelByBase("bala");
+	var audio = new Audio('audio/gun.mp3');
+	audio.play();
+	jugador.position.z += 0.1;
 }
 
 function spawnBomba() {
+
 	addModelByBase("bomba");
 }
 
@@ -325,6 +497,7 @@ function addModelByBase(name) {
 	}
 
 	if (name == "jefeZombie"){
+
 		var jefeZombieSpawned = jefeZombie.clone();
 		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
 		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
@@ -336,6 +509,8 @@ function addModelByBase(name) {
 		vidaJefe.push(3);
 		jefesZombie.push(jefeZombieSpawned);		
 		scene.add(jefeZombieSpawned);
+		var audio = new Audio('audio/jefeSpawn.mp3');
+		audio.play();
 	}
 
 	if (name == "humano"){
@@ -349,6 +524,10 @@ function addModelByBase(name) {
 		humanoSpawned.name = id;
 		humanos.push(humanoSpawned);		
 		scene.add(humanoSpawned);
+
+		var audio = new Audio('audio/help.mp3');
+		audio.play();
+
 	}
 }
 
@@ -395,7 +574,7 @@ function loadObjBases(objPath, texturePath, name) {
 		}
 
 		if(name == "bomba"){
-			object.scale.set(0.02,0.02,0.02);
+			object.scale.set(0.6,0.6, 0.6);
 			bomba = object.clone();
 		}
 
@@ -473,6 +652,8 @@ function render() {
 	if (auxScore>=150){
 		cantidadBombas+=1;
 		auxScore=0;
+		$(".numBombas").empty();
+		$(".numBombas").append("x " + cantidadBombas);
 	}
 	
 	// Deteccion de colision bala-zombie
@@ -486,6 +667,10 @@ function render() {
 				limpiarArreglos();
 				score+=10;
 				auxScore+=10;
+
+				var audio = new Audio('audio/impacto.mp3');
+				audio.play();
+
 				$(".numScore").text(score);
 				$( ".numScore" ).animate({
 				    fontSize: 40
@@ -512,6 +697,10 @@ function render() {
 					delete balas[j];
 					delete vidaJefe[j];
 					limpiarArreglos();
+
+					var audio = new Audio('audio/impacto.mp3');
+					audio.play();
+
 					score+=30;
 					auxScore+=30;
 					$(".numScore").text(score);
@@ -542,6 +731,10 @@ function render() {
 				scene.remove(scene.getObjectByName(balas[j].name));
 				delete humanos[i];
 				delete balas[j];
+
+				var audio = new Audio('audio/humano.mp3');
+				audio.play();
+
 				limpiarArreglos();
 				var vidaSize = $(".vida").css("width");
 				vidaSize = vidaSize.replace('px','');
@@ -553,11 +746,21 @@ function render() {
 		// Deteccion de colision bomba-zombie
 	for (var i = 0; i < zombies.length; i++){
 		for (var j = 0; j < bombas.length; j++){
-			//if(zombies[i].position.x == bombas[j].position.x && zombies[i].position.z >= (bombas[j].position.z - 10)){
-			if((zombies[i].position.x >= (bombas[j].position.x - 2.5) && zombies[i].position.x <= (bombas[j].position.x + 2.5) || zombies[i].position.x == bombas[j].position.x) && zombies[i].position.z >= (bombas[j].position.z - 2)){
+			
+			var distancia = Math.sqrt(Math.pow((bombas[j].position.x - zombies[i].position.x), 2) + Math.pow((bombas[j].position.y - zombies[i].position.y), 2) + Math.pow((bombas[j].position.z - zombies[i].position.z), 2)); 
+
+			if(bombas[j].position.y <= 1 
+				&& distancia <= 6
+				&& anguloBomba > 160){
 				scene.remove(scene.getObjectByName(zombies[i].name));
 				scene.remove(scene.getObjectByName(bombas[j].name));
+
+
+				var audio = new Audio('audio/impacto.mp3');
+				audio.play();
+
 				delete zombies[i];
+				limpiarArreglos();
 			}	
 		}	
 		delete bombas[j];
@@ -568,36 +771,27 @@ function render() {
 	// Deteccion de colision bomba-jefeZombie
 	for (var i = 0; i < jefesZombie.length; i++){
 		for (var j = 0; j < bombas.length; j++){
-			//if(jefesZombie[i].position.x == bombas[j].position.x && jefesZombie[i].position.z >= (bombas[j].position.z - 10)){
-			if((jefesZombie[i].position.x >= (bombas[j].position.x - 2.5) && jefesZombie[i].position.x <= (bombas[j].position.x + 2.5) || jefesZombie[i].position.x == bombas[j].position.x) && jefesZombie[i].position.z >= (bombas[j].position.z - 2)){
+				
+			var distancia = Math.sqrt(Math.pow((bombas[j].position.x - jefesZombie[i].position.x), 2) + Math.pow((bombas[j].position.y - jefesZombie[i].position.y), 2) + Math.pow((bombas[j].position.z - jefesZombie[i].position.z), 2)); 
+
+			if(bombas[j].position.y <= 1 
+				&& distancia <= 6
+				 && anguloBomba > 160){
 				scene.remove(scene.getObjectByName(jefesZombie[i].name));
 				scene.remove(scene.getObjectByName(bombas[j].name));
 				delete jefesZombie[i];
 				delete vidaJefe[j];
+
+				var audio = new Audio('audio/impacto.mp3');
+				audio.play();
+
+				limpiarArreglos();
 			}	
 		}
 		delete bombas[j];	
 		limpiarArreglos();
 	}
 
-	
-	/*zombies = zombies.filter(function( element ) {
-	   return element !== undefined;
-	});
-	
-	balas = balas.filter(function( element ) {
-	   return element !== undefined;
-	});
-
-	jefesZombie = jefesZombie.filter(function( element ) {
-	   return element !== undefined;
-	});
-
-	humanos = humanos.filter(function(element)){
-		return element !== undefined;
-	}
-	*/
-	
 	// Movimiento de zombies
 	for (var i = 0; i < zombies.length; i++){
 		if(zombies[i].position.z < posZJugador - 1){
@@ -647,7 +841,7 @@ function render() {
 
 	if((vidaSize - 1) <= 0) {
 
-		if(localStorage.usuario === undefined || localStorage.usuario == ""){
+	/*	if(localStorage.usuario === undefined || localStorage.usuario == ""){
 			swal({
 		  title: "GAME OVER",
 		  text: "Score: " + score,
@@ -663,8 +857,7 @@ function render() {
 			if (inputValue === false) return false;
 
 			  if (inputValue === "") {
-			    swal.showInputError("You need to write something!");
-
+			    swal.showInputError("Tienes que escribir tu nombre");
 			    return false
 			  } else{	
 			  	    FB.ui({
@@ -684,40 +877,12 @@ function render() {
 		});
 		}	else {
 
-			swal({
-		  title: "GAME OVER",
-		  text: "Usuario: " + localStorage.usuario + " <br/> Score: " + score,
-		  html: true,
-		  showCancelButton: true,
-		  confirmButtonText: "PUBLICAR EN FACEBOOK",
-		  cancelButtonText: "Continuar",
-		  closeOnConfirm: false,
-		},
-		function(isConfirm){
-			if (isConfirm) {
-			    //window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
-			     FB.ui({
-			        method: 'share',
-			        picture:'http://miadventure.x10.mx/portadaMI2.png',
-			        href:'http://miadventure.x10.mx/',
-			        caption: 'Dead Hunting',
-			        quote: "My Score: " + score,
-			        hashtag: "#MiAdventure"
-			      }, function(response){});			
-			  } else {
-			    window.location='index.html';
-			  }				  	
-		});
+		}	*/
 
-		}	
-
-			if(!gameover){
-			$.ajax({
-      			type: "POST",
-					url: "http://proyectoaigc.netai.net/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
-    			}).done(function(data) {
-      				console.log(data);
-    			});
+		if(localStorage.usuario === undefined || localStorage.usuario == ""){
+			dialog2.dialog( "open" );
+		} else{
+			dialog.dialog( "open" );
 		}
 
 		gameover = true;
@@ -737,16 +902,26 @@ function render() {
 
 	// Impulso de la bomba
 	for (var i = 0; i < bombas.length; i++){
-		if(bombas[i].position.z < -5){
+		if(bombas[i].position.y < 0){
 			scene.remove(scene.getObjectByName(bombas[i].name));
+			var audio = new Audio('audio/LAW.mp3');
+			audio.play();
+			parts.push(new ExplodeAnimation(bombas[i].position.x, bombas[i].position.y, bombas[i].position.z));
 			delete bombas[i];
 			limpiarArreglos();
 		}else{
-			bombas[i].position.z -= 4;
+
+			anguloBomba+=3;
+			console.log(anguloBomba);
+			bombas[i].position.z = posZJugador - 5 + Math.cos(de2ra(anguloBomba))*5;
+			bombas[i].position.y = Math.sin(de2ra(anguloBomba))*5;
+			bombas[i].rotation.x += 0.1;
 		}		
 	}		
 
 	sky.rotation.y += 0.0005;
+
+
 	document.addEventListener('keydown',onDocumentKeyDown,false);
 	function onDocumentKeyDown(event){
 		if(!fired) {
@@ -789,6 +964,17 @@ function render() {
 	}
 
 	renderer.render(scene, camera);
+
+  
+        var pCount = parts.length;
+          while(pCount--) {
+            parts[pCount].update();
+          }
+
+	if(jugador !== undefined){
+		jugador.position.z = 15;
+	}
+
 }
 }
 

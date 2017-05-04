@@ -44,3 +44,17 @@
     left: 15px;
     position: absolute;
 }
+
+.bombas {
+    position: absolute;
+    right: 0;
+    margin: 20px;
+}
+
+.numBombas {
+    color: red;
+    font-size: 25px;
+    font-family: DeadKansas;
+    display: inline;
+
+}
