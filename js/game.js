@@ -32,6 +32,9 @@ var gameover = false;
 var pausa = false;
 var anguloBomba = 20;
 var dialog, dialog2, form;
+var numBalas = 20;
+var recargando = false;
+var lanzandoTNT = false;
 
 
 //////////////settings/////////
@@ -44,6 +47,11 @@ var colors = [0x660000];
 var dirs = [];
 var parts = [];
 
+function resume() {
+	$(".juego").css("display","flex");
+	$(".pausa").css("display","none");
+	gameover = false;			
+}
 
 function ExplodeAnimation(x,y,z)
 {
@@ -326,47 +334,50 @@ $(document).ready(function() {
  	$("body").on("keypress", function (e) {
  		//$(".numScore").text(e.keyCode);
  		//Tecla "b"
-    	if (e.keyCode==98){
-    		if (cantidadBombas > 0){
-    			
-    				
-    			spawnBomba();    			
-    			anguloBomba = 20;
-    			cantidadBombas -= 1;
-    			$(".numBombas").empty();
-				$(".numBombas").append("x " + cantidadBombas);
-    		}
-    	}
-    	//Tecla "p"
-    	if (e.keyCode==112){
-    		//window.location="pause.html";
-			gameover = true;
-			$(".juego").css("display","none");
-			$(".pausa").css("display","block");
+ 		if(!gameover){
+	    	if (e.keyCode==98){
+	    		if (cantidadBombas > 0 && lanzandoTNT == false){    			
+	    			lanzandoTNT = true;
+	    			spawnBomba();    			
+	    			anguloBomba = 20;
+	    			cantidadBombas -= 1;
+	    			$(".numBombas").empty();
+					$(".numBombas").append("x " + cantidadBombas);
+	    		}
+	    	}
+	    	//Tecla "p"
+	    	if (e.keyCode==112){
+	    		//window.location="pause.html";
+				gameover = true;
+				$(".juego").css("display","none");
+				$(".pausa").css("display","block");
 
-		}
-		//Tecla "q"
-		if (e.keyCode==113){
-			$(".juego").css("display","flex");
-			$(".pausa").css("display","none");
-			gameover = false;
-			render();
+			}
+			//Tecla "q"
+			if (e.keyCode==113){
+				$(".juego").css("display","flex");
+				$(".pausa").css("display","none");
+				gameover = false;
+			}
 		}
 	});
+
 
 	setTimeout(spawnZombie, 2500);
 	setTimeout(spawnJefeZombie, 10000);
 	setTimeout(spawnHumano, 12000);
 	
 	$('body').mousedown(function(event) {
-		switch (event.which) {
-	    case 1:
-	        //alert('Left Mouse button pressed.');
-			spawnBullet();
-	        break;
-	    case 3:
-	        //alert('Right Mouse button pressed.');
-	        break;
+		if(!gameover){
+			switch (event.which) {
+		    case 1:
+		        //alert('Left Mouse button pressed.');
+				spawnBullet();
+		        break;
+		    case 3:
+		        //alert('Right Mouse button pressed.');
+		        break;
+			}
 		}
 	});
 	
@@ -374,31 +385,55 @@ $(document).ready(function() {
 
 //Spawn Models
 function spawnBullet() {
-	addModelByBase("bala");
-	var audio = new Audio('audio/gun.mp3');
-	audio.play();
-	jugador.position.z += 0.1;
+	if(numBalas > 0){
+		addModelByBase("bala");
+		numBalas--;
+		var audio = new Audio('audio/9mm.mp3');
+		audio.play();
+		jugador.position.z += 0.1;
+	} else {
+		if(!recargando){
+			recargar();
+		}
+	}
 }
 
-function spawnBomba() {
+function recargar(){
+	recargando = true;
+	var audio = new Audio('audio/reload.mp3');
+	audio.play();	
+	setTimeout(function(){ 
+		numBalas = 20; 		
+		recargando = false;
+	}, 1500);
+}
 
+
+function spawnBomba() {
+	if(!gameover)
 	addModelByBase("bomba");
 }
 
 function spawnZombie() {	
+	if(!gameover){
 	addModelByBase("zombie");
 	setTimeout(spawnZombie, 2000);
+}
 
 }
 
-function spawnJefeZombie() {	
+function spawnJefeZombie() {
+if(!gameover){
 	addModelByBase("jefeZombie");
 	setTimeout(spawnJefeZombie, 10000);
 }
+}
 
 function spawnHumano() {	
+	if(!gameover){
 	addModelByBase("humano");
 	setTimeout(spawnHumano, 7000);
+}
 
 }
 
@@ -645,64 +680,37 @@ function limpiarArreglos() {
 
 function render() {
 
-	if(!gameover){
 	requestAnimationFrame(render);
 
-	//Aumento de número de bombas
-	if (auxScore>=150){
-		cantidadBombas+=1;
-		auxScore=0;
-		$(".numBombas").empty();
-		$(".numBombas").append("x " + cantidadBombas);
-	}
-	
-	// Deteccion de colision bala-zombie
-	for (var i = 0; i < zombies.length; i++){
-		for (var j = 0; j < balas.length; j++){
-			if(zombies[i].position.x == balas[j].position.x && zombies[i].position.z >= balas[j].position.z){
-				scene.remove(scene.getObjectByName(zombies[i].name));
-				scene.remove(scene.getObjectByName(balas[j].name));
-				delete zombies[i];
-				delete balas[j];
-				limpiarArreglos();
-				score+=10;
-				auxScore+=10;
+	$(".numBalas").empty();
+	$(".numBalas").html("x " + numBalas + "/ <span>∞<span>");
 
-				var audio = new Audio('audio/impacto.mp3');
-				audio.play();
+	if(!gameover) {
+		
 
-				$(".numScore").text(score);
-				$( ".numScore" ).animate({
-				    fontSize: 40
-				  }, 25, function() {
-					    $( ".numScore" ).animate({
-					    fontSize: 30
-					  }, 25, function() {
-					    // Animation complete.
-					  });
-				  });
-			}	
-		}	
-	}
-
-	// Deteccion de colision bala-jefeZombie
-	for (var i = 0; i < jefesZombie.length; i++){
-		for (var j = 0; j < balas.length; j++){
-			if(jefesZombie[i].position.x == balas[j].position.x && jefesZombie[i].position.z >= balas[j].position.z){
-				 vidaJefe[i] -=1;
-				if (vidaJefe[i]==0){
-					scene.remove(scene.getObjectByName(jefesZombie[i].name));
+		//Aumento de número de bombas
+		if (auxScore>=150){
+			cantidadBombas+=1;
+			auxScore=0;
+			$(".numBombas").empty();
+			$(".numBombas").append("x " + cantidadBombas);
+		}
+		
+		// Deteccion de colision bala-zombie
+		for (var i = 0; i < zombies.length; i++){
+			for (var j = 0; j < balas.length; j++){
+				if(zombies[i].position.x == balas[j].position.x && zombies[i].position.z >= balas[j].position.z){
+					scene.remove(scene.getObjectByName(zombies[i].name));
 					scene.remove(scene.getObjectByName(balas[j].name));
-					delete jefesZombie[i];
+					delete zombies[i];
 					delete balas[j];
-					delete vidaJefe[j];
 					limpiarArreglos();
+					score+=10;
+					auxScore+=10;
 
 					var audio = new Audio('audio/impacto.mp3');
 					audio.play();
 
-					score+=30;
-					auxScore+=30;
 					$(".numScore").text(score);
 					$( ".numScore" ).animate({
 					    fontSize: 40
@@ -713,269 +721,256 @@ function render() {
 						    // Animation complete.
 						  });
 					  });
-				} else {
+				}	
+			}	
+		}
+
+		// Deteccion de colision bala-jefeZombie
+		for (var i = 0; i < jefesZombie.length; i++){
+			for (var j = 0; j < balas.length; j++){
+				if(jefesZombie[i].position.x == balas[j].position.x && jefesZombie[i].position.z >= balas[j].position.z){
+					 vidaJefe[i] -=1;
+					if (vidaJefe[i]==0){
+						scene.remove(scene.getObjectByName(jefesZombie[i].name));
+						scene.remove(scene.getObjectByName(balas[j].name));
+						delete jefesZombie[i];
+						delete balas[j];
+						delete vidaJefe[j];
+						limpiarArreglos();
+
+						var audio = new Audio('audio/impacto.mp3');
+						audio.play();
+
+						score+=30;
+						auxScore+=30;
+						$(".numScore").text(score);
+						$( ".numScore" ).animate({
+						    fontSize: 40
+						  }, 25, function() {
+							    $( ".numScore" ).animate({
+							    fontSize: 30
+							  }, 25, function() {
+							    // Animation complete.
+							  });
+						  });
+					} else {
+						scene.remove(scene.getObjectByName(balas[j].name));
+						delete balas[j];
+						limpiarArreglos();
+					}
+				}	
+			}	
+		}
+
+		// Deteccion de colision bala-humano
+		for (var i = 0; i < humanos.length; i++){
+			for (var j = 0; j < balas.length; j++){
+				if(humanos[i].position.x == balas[j].position.x && humanos[i].position.z >= balas[j].position.z){
+					scene.remove(scene.getObjectByName(humanos[i].name));
 					scene.remove(scene.getObjectByName(balas[j].name));
+					delete humanos[i];
 					delete balas[j];
+
+					var audio = new Audio('audio/humano.mp3');
+					audio.play();
+
 					limpiarArreglos();
-
-				}
+					var vidaSize = $(".vida").css("width");
+					vidaSize = vidaSize.replace('px','');
+					$(".vida").css("width", vidaSize - 25);
+				}	
 			}	
-		}	
-	}
-
-	// Deteccion de colision bala-humano
-	for (var i = 0; i < humanos.length; i++){
-		for (var j = 0; j < balas.length; j++){
-			if(humanos[i].position.x == balas[j].position.x && humanos[i].position.z >= balas[j].position.z){
-				scene.remove(scene.getObjectByName(humanos[i].name));
-				scene.remove(scene.getObjectByName(balas[j].name));
-				delete humanos[i];
-				delete balas[j];
-
-				var audio = new Audio('audio/humano.mp3');
-				audio.play();
-
-				limpiarArreglos();
-				var vidaSize = $(".vida").css("width");
-				vidaSize = vidaSize.replace('px','');
-				$(".vida").css("width", vidaSize - 25);
-			}	
-		}	
-	}
+		}
 
 		// Deteccion de colision bomba-zombie
-	for (var i = 0; i < zombies.length; i++){
-		for (var j = 0; j < bombas.length; j++){
-			
-			var distancia = Math.sqrt(Math.pow((bombas[j].position.x - zombies[i].position.x), 2) + Math.pow((bombas[j].position.y - zombies[i].position.y), 2) + Math.pow((bombas[j].position.z - zombies[i].position.z), 2)); 
-
-			if(bombas[j].position.y <= 1 
-				&& distancia <= 6
-				&& anguloBomba > 160){
-				scene.remove(scene.getObjectByName(zombies[i].name));
-				scene.remove(scene.getObjectByName(bombas[j].name));
-
-
-				var audio = new Audio('audio/impacto.mp3');
-				audio.play();
-
-				delete zombies[i];
-				limpiarArreglos();
-			}	
-		}	
-		delete bombas[j];
-		limpiarArreglos();
-	}
-	
-
-	// Deteccion de colision bomba-jefeZombie
-	for (var i = 0; i < jefesZombie.length; i++){
-		for (var j = 0; j < bombas.length; j++){
+		for (var i = 0; i < zombies.length; i++){
+			for (var j = 0; j < bombas.length; j++){
 				
-			var distancia = Math.sqrt(Math.pow((bombas[j].position.x - jefesZombie[i].position.x), 2) + Math.pow((bombas[j].position.y - jefesZombie[i].position.y), 2) + Math.pow((bombas[j].position.z - jefesZombie[i].position.z), 2)); 
+				var distancia = Math.sqrt(Math.pow((bombas[j].position.x - zombies[i].position.x), 2) + Math.pow((bombas[j].position.y - zombies[i].position.y), 2) + Math.pow((bombas[j].position.z - zombies[i].position.z), 2)); 
 
-			if(bombas[j].position.y <= 1 
-				&& distancia <= 6
-				 && anguloBomba > 160){
-				scene.remove(scene.getObjectByName(jefesZombie[i].name));
-				scene.remove(scene.getObjectByName(bombas[j].name));
-				delete jefesZombie[i];
-				delete vidaJefe[j];
+				if(bombas[j].position.y <= 1 
+					&& distancia <= 6
+					&& anguloBomba > 160){
+					scene.remove(scene.getObjectByName(zombies[i].name));
+					scene.remove(scene.getObjectByName(bombas[j].name));
 
-				var audio = new Audio('audio/impacto.mp3');
-				audio.play();
 
-				limpiarArreglos();
+					var audio = new Audio('audio/impacto.mp3');
+					audio.play();
+
+					delete zombies[i];
+					limpiarArreglos();
+				}	
 			}	
-		}
-		delete bombas[j];	
-		limpiarArreglos();
-	}
+			delete bombas[j];
+			limpiarArreglos();
+		}	
 
-	// Movimiento de zombies
-	for (var i = 0; i < zombies.length; i++){
-		if(zombies[i].position.z < posZJugador - 1){
-			zombies[i].position.z += 0.1;
-		}
-		
-		if(zombies[i].position.z + 1 >= posZJugador){
-			var vidaSize = $(".vida").css("width");
-			vidaSize = vidaSize.replace('px','');
-			vidaSize = Number(vidaSize) -1;
-			$(".vida").css("width", vidaSize);
+		// Deteccion de colision bomba-jefeZombie
+		for (var i = 0; i < jefesZombie.length; i++){
+			for (var j = 0; j < bombas.length; j++){
+					
+				var distancia = Math.sqrt(Math.pow((bombas[j].position.x - jefesZombie[i].position.x), 2) + Math.pow((bombas[j].position.y - jefesZombie[i].position.y), 2) + Math.pow((bombas[j].position.z - jefesZombie[i].position.z), 2)); 
 
+				if(bombas[j].position.y <= 1 
+					&& distancia <= 6
+					 && anguloBomba > 160){
+					scene.remove(scene.getObjectByName(jefesZombie[i].name));
+					scene.remove(scene.getObjectByName(bombas[j].name));
+					delete jefesZombie[i];
+					delete vidaJefe[j];
+
+					var audio = new Audio('audio/impacto.mp3');
+					audio.play();
+
+					limpiarArreglos();
+				}	
+			}
+			delete bombas[j];	
+			limpiarArreglos();
+		}
+
+		// Movimiento de zombies
+		for (var i = 0; i < zombies.length; i++){
+			if(zombies[i].position.z < posZJugador - 1){
+				zombies[i].position.z += 0.1;
+			}
 			
+			if(zombies[i].position.z + 1 >= posZJugador){
+				var vidaSize = $(".vida").css("width");
+				vidaSize = vidaSize.replace('px','');
+				vidaSize = Number(vidaSize) -1;
+				$(".vida").css("width", vidaSize);			
+			}
 		}
-	}
 
-	// Movimiento de jefesZombie
-	for (var i = 0; i < jefesZombie.length; i++){
-		if(jefesZombie[i].position.z < posZJugador - 1){
-			jefesZombie[i].position.z += 0.05;
-		}
-		
-		if(jefesZombie[i].position.z + 1 >= posZJugador){
-			var vidaSize = $(".vida").css("width");
-			vidaSize = vidaSize.replace('px','');
-			$(".vida").css("width", vidaSize - 2);
-		}
-	}
-	
-
-	// Movimiento de humanos
-	for (var i = 0; i < humanos.length; i++){
-		if(humanos[i].position.z < posZJugador - 1){
-			humanos[i].position.z += 0.05;
-		}
-		
-		if(humanos[i].position.z + 1 >= posZJugador){
-			var vidaSize = $(".vida").css("width");
-			vidaSize = vidaSize.replace('px','');
-			var vida = Number(vidaSize) + 20;
-			$(".vida").css("width", vida);
-			scene.remove(scene.getObjectByName(humanos[i].name));
-			delete humanos[i];
-			limpiarArreglos();
-		}
-	}
-
-	if((vidaSize - 1) <= 0) {
-
-	/*	if(localStorage.usuario === undefined || localStorage.usuario == ""){
-			swal({
-		  title: "GAME OVER",
-		  text: "Score: " + score,
-		  type: "input",
-		  showCancelButton: true,
-		  confirmButtonText: "PUBLICAR EN FACEBOOK",
-		  cancelButtonText: "Continuar",
-		  closeOnConfirm: false,
-		  inputPlaceholder: "Escribe tu nombre"
-		},
-		function(inputValue, isConfirm){
+		// Movimiento de jefesZombie
+		for (var i = 0; i < jefesZombie.length; i++){
+			if(jefesZombie[i].position.z < posZJugador - 1){
+				jefesZombie[i].position.z += 0.05;
+			}
 			
-			if (inputValue === false) return false;
+			if(jefesZombie[i].position.z + 1 >= posZJugador){
+				var vidaSize = $(".vida").css("width");
+				vidaSize = vidaSize.replace('px','');
+				$(".vida").css("width", vidaSize - 2);
+			}
+		}	
 
-			  if (inputValue === "") {
-			    swal.showInputError("Tienes que escribir tu nombre");
-			    return false
-			  } else{	
-			  	    FB.ui({
-			        method: 'share',
-			        picture:'http://miadventure.x10.mx/portadaMI2.png',
-			        href:'http://miadventure.x10.mx/',
-			        caption: 'Dead Hunting',
-			        quote: "My Score: " + score,
-			        hashtag: "#MiAdventure"
-			      }, function(response){});				  	
-			  	//window.location='https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.uanl.mx%2Fenlinea&amp;src=sdkpreparse';
-			  }
-
-			   localStorage.usuario = inputValue;
-			   window.location='index.html';
-		  	
-		});
-		}	else {
-
-		}	*/
-
-		if(localStorage.usuario === undefined || localStorage.usuario == ""){
-			dialog2.dialog( "open" );
-		} else{
-			dialog.dialog( "open" );
+		// Movimiento de humanos
+		for (var i = 0; i < humanos.length; i++){
+			if(humanos[i].position.z < posZJugador - 1){
+				humanos[i].position.z += 0.05;
+			}
+			
+			if(humanos[i].position.z + 1 >= posZJugador){
+				var vidaSize = $(".vida").css("width");
+				vidaSize = vidaSize.replace('px','');
+				var vida = Number(vidaSize) + 20;
+				$(".vida").css("width", vida);
+				scene.remove(scene.getObjectByName(humanos[i].name));
+				delete humanos[i];
+				limpiarArreglos();
+			}
 		}
 
-		gameover = true;
-		
-	}
+		// Deteccion de vida
+		if((vidaSize - 1) <= 0) {
+			if(localStorage.usuario === undefined || localStorage.usuario == ""){
+				dialog2.dialog( "open" );
+			} else{
+				dialog.dialog( "open" );
+			}
+			gameover = true;		
+		}
 
-	// Impulso de la bala
-	for (var i = 0; i < balas.length; i++){
-		if(balas[i].position.z < -5){
-			scene.remove(scene.getObjectByName(balas[i].name));
-			delete balas[i];
-			limpiarArreglos();
-		}else{
-			balas[i].position.z -= 2;
-		}		
-	}	
-
-	// Impulso de la bomba
-	for (var i = 0; i < bombas.length; i++){
-		if(bombas[i].position.y < 0){
-			scene.remove(scene.getObjectByName(bombas[i].name));
-			var audio = new Audio('audio/LAW.mp3');
-			audio.play();
-			parts.push(new ExplodeAnimation(bombas[i].position.x, bombas[i].position.y, bombas[i].position.z));
-			delete bombas[i];
-			limpiarArreglos();
-		}else{
-
-			anguloBomba+=3;
-			console.log(anguloBomba);
-			bombas[i].position.z = posZJugador - 5 + Math.cos(de2ra(anguloBomba))*5;
-			bombas[i].position.y = Math.sin(de2ra(anguloBomba))*5;
-			bombas[i].rotation.x += 0.1;
-		}		
-	}		
-
-	sky.rotation.y += 0.0005;
-
-
-	document.addEventListener('keydown',onDocumentKeyDown,false);
-	function onDocumentKeyDown(event){
-		if(!fired) {
-			fired = true;
-			var delta = 0.005;
-			event = event || window.event;
-			var keycode = event.keyCode;
-			switch(keycode){
-				case 37 : //left arrow
-					jugador.position.x -= 1;
-					posXJugador = jugador.position.x;
-					//camera.position.x = camera.position.x - delta;
-				break;
-				case 39 : // right arrow
-					jugador.position.x += 1;
-					posXJugador = jugador.position.x;
-
-					//camera.position.x = camera.position.x + delta;
-				break;
+		// Impulso de la bala
+		for (var i = 0; i < balas.length; i++){
+			if(balas[i].position.z < -5){
+				scene.remove(scene.getObjectByName(balas[i].name));
+				delete balas[i];
+				limpiarArreglos();
+			}else{
+				balas[i].position.z -= 2;
 			}		
-		
-			if(posXJugador > 3){
-				posXJugador = 3;
-				jugador.position.x = 3;
+		}	
 
-			}
+		// Impulso de la bomba
+		for (var i = 0; i < bombas.length; i++){
+			if(bombas[i].position.y < 0){
+				scene.remove(scene.getObjectByName(bombas[i].name));
+				var audio = new Audio('audio/LAW.mp3');
+				lanzandoTNT = false;
+				audio.play();
+				parts.push(new ExplodeAnimation(bombas[i].position.x, bombas[i].position.y, bombas[i].position.z));
+				delete bombas[i];
+				limpiarArreglos();
+			}else{
+
+				anguloBomba+=3;
+				console.log(anguloBomba);
+				bombas[i].position.z = posZJugador - 5 + Math.cos(de2ra(anguloBomba))*5;
+				bombas[i].position.y = Math.sin(de2ra(anguloBomba))*5;
+				bombas[i].rotation.x += 0.1;
+			}		
+		}		
+
+		sky.rotation.y += 0.0005;
+
+		document.addEventListener('keydown',onDocumentKeyDown,false);
+
+		function onDocumentKeyDown(event){
+			if(!fired) {
+				fired = true;
+				var delta = 0.005;
+				event = event || window.event;
+				var keycode = event.keyCode;
+				switch(keycode){
+					case 37 : //left arrow
+						jugador.position.x -= 1;
+						posXJugador = jugador.position.x;
+						//camera.position.x = camera.position.x - delta;
+					break;
+					case 39 : // right arrow
+						jugador.position.x += 1;
+						posXJugador = jugador.position.x;
+
+						//camera.position.x = camera.position.x + delta;
+					break;
+				}		
 			
-			if(posXJugador < -3){
-				posXJugador = -3;
-				jugador.position.x = -3;
+				if(posXJugador > 3){
+					posXJugador = 3;
+					jugador.position.x = 3;
+
+				}
+				
+				if(posXJugador < -3){
+					posXJugador = -3;
+					jugador.position.x = -3;
+				}
+				
+				document.addEventListener('keyup',onDocumentKeyUp,false);
 			}
-			
-			document.addEventListener('keyup',onDocumentKeyUp,false);
 		}
-	}
 
-	function onDocumentKeyUp(event){
-		document.removeEventListener('keydown',onDocumentKeyDown,false);
-		fired = false;
+		function onDocumentKeyUp(event){
+			document.removeEventListener('keydown',onDocumentKeyDown,false);
+			fired = false;
+		}
+	  
+	    var pCount = parts.length;
+	    while(pCount--) {
+	    	parts[pCount].update();
+	    }
+
+		if(jugador !== undefined){
+			jugador.position.z = 15;
+		}
+
 	}
 
 	renderer.render(scene, camera);
-
-  
-        var pCount = parts.length;
-          while(pCount--) {
-            parts[pCount].update();
-          }
-
-	if(jugador !== undefined){
-		jugador.position.z = 15;
-	}
-
-}
 }
 
 function removeEntity(object) {

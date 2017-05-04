@@ -58,3 +58,17 @@
     display: inline;
 
 }
+
+.balas {
+    position: absolute;
+    right: 250px;
+    margin: 20px;
+}
+
+.numBalas {
+    color: red;
+    font-size: 25px;
+    font-family: DeadKansas;
+    display: inline;
+
+}

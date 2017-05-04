@@ -1,6 +1,8 @@
 <html>
 <head>
+
 	<title>Dead Hunting</title>
+	<meta charset="UTF-8">
 	<link rel="stylesheet" href="css/game.css">
 	<link rel="stylesheet" href="css/pause.css">
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -30,12 +32,12 @@
 		<div class="bordeVida"><div class="vida"></div></div>
 		<div class="score">Score<div class="numScore"></div></div>
 		<div class="bombas"><img src="assets/textures/tnt.png" width="45px" height="45px"><div class="numBombas"></div></div>
+		<div class="balas"><img src="assets/textures/bullet.png" width="45px" height="45px"><div class="numBalas"></div></div>
 
 	</div>
 	<div class="pausa" style="display: none;">
 		<div class="titulo"><img src="imagenes/Pause.png"></div>
-		<div class="menu"  id="Pausa">CONTINUAR</div>
-		<div class="menu" onclick="window.location='opciones.html';">OPCIONES</div>
+		<div class="menu"  id="Pausa" onclick='resume();'>CONTINUAR</div>
 		<div class="menu" onclick="window.location='index.html';">SALIR</div>			
 	</div>
 
