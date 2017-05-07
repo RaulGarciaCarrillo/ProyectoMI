@@ -206,7 +206,7 @@ $(document).ready(function() {
 	camera = new THREE.PerspectiveCamera(75, visibleSize.width / visibleSize.height, 0.1, 100000);
 	camera.position.z = 17;
 	camera.position.y = 3;
-	camera.rotation.x = de2ra(-35);
+	camera.rotation.x = de2ra(-30);
 
 	// Renderer
 	renderer = new THREE.WebGLRenderer({ precision: "mediump" });
@@ -289,7 +289,8 @@ $(document).ready(function() {
 	loadObjBases("assets/models/bullet/bullet.obj","assets/models/bullet/bullet.png","bala");
 	loadObjBases("assets/models/Bomb/Bomb.obj","assets/models/Bomb/Bomb.png","bomba");
 	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
-	addModel("assets/models/escenario/escenario.obj","assets/models/escenario/escenario.png","escenario");
+	addModel("assets/models/escenario/hospital.obj","assets/models/escenario/hospital.jpg","escenario");
+	addModel("assets/models/escenario/VistasOpi.obj","assets/models/escenario/VistasOpi.png","Vistas");
 	scene.add(ambientLight);
 	scene.add(directionalLight);
 

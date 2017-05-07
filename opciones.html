@@ -16,10 +16,15 @@
 $(document).ready(function() {
 
 	if(localStorage.usuario === null || localStorage.usuario == ""){
-
 	}else{
-
 		$(".namre").val(localStorage.usuario);
+	}
+
+	if(localStorage.audio === null || localStorage.audio == ""){
+		localStorage.audio = "si";
+	}else{
+		$(".namre").val(localStorage.usuario);
+		$(".")
 	}
 
 	document.addEventListener('keyup',onDocumentKeyUp,false);
