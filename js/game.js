@@ -58,6 +58,8 @@ var dirs = [];
 var parts = [];
 
 var spotLight;
+var spotLight2;
+var spotLight3;
 
 $(document).ready(function() {
 
@@ -93,7 +95,7 @@ $(document).ready(function() {
 	$(function () {
 		dialog = $( "#dialog-form" ).dialog({
 		      autoOpen: false,
-		      height: 400,
+		      height: 300,
 		      width: 350,
 		      modal: true,
 		      buttons: {
@@ -117,16 +119,18 @@ $(document).ready(function() {
 			      }, function(response){});
 			      dialog.dialog( "close" );		
 		        },
-		        CONTINUAR: function() {
-		          var name = $("#name").val();
-		          localStorage.usuario = name;
+		        CONTINUAR: function() {	          
+		           
+		          
+
 		          $.ajax({
 	      				type: "POST",
-						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
 	    			}).done(function(data) {
 	      				console.log(data);
 	    			});
 	    			dialog.dialog( "close" );
+	    			window.location = 'index.html';
 		        }
 		      },
 		      close: function() {
@@ -135,7 +139,7 @@ $(document).ready(function() {
 
 		dialog2 = $( "#dialog-form2" ).dialog({
 			autoOpen: false,
-			height: 400,
+			height: 300,
 			width: 350,
 			modal: true,
 			buttons: {
@@ -163,12 +167,16 @@ $(document).ready(function() {
 			  var name = $("#name").val();
 			  localStorage.usuario = name;
 			  $.ajax({
-						type: "POST",
-					url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+					type: "POST",
+					url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score,
+					error: function (x, h,r ){
+						alert(x + h + r);
+					}
 				}).done(function(data) {
-						console.log(data);
+					console.log(data);
 				});
 				dialog2.dialog( "close" );
+				window.location = 'index.html';
 			}
 			},
 			close: function() {
@@ -183,23 +191,23 @@ $(document).ready(function() {
 	scene = new THREE.Scene();
 	
 
-	spotLight = new THREE.SpotLight( 0xffffff, 1 );
-	var lightHelper;
-	spotLight.position.set( 0, 5, 0 );
+	spotLight = new THREE.SpotLight( 0xffffff,  0.1);
+	spotLight.position.set( -0.10, 3.9, 1 );
 	spotLight.castShadow = true;
-	spotLight.angle = 0.4;
+	spotLight.angle = 2;
 	spotLight.penumbra = 1;
 	spotLight.decay = 2;
-	spotLight.distance = 2000;
+	spotLight.distance = 200;
 	spotLight.shadow.mapSize.width = 1024;
 	spotLight.shadow.mapSize.height = 1024;
 	spotLight.shadow.camera.near = 1;
 	spotLight.shadow.camera.far = 200;
 	spotLight.intensity = 1;
-
-	lightHelper = new THREE.SpotLightHelper( spotLight );
 	scene.add( spotLight );
 
+
+	var lightHelper = new THREE.SpotLightHelper( spotLight );
+	//scene.add( lightHelper );
 
 
 	// Camara
@@ -234,7 +242,7 @@ $(document).ready(function() {
 	});
 	sky = new THREE.Mesh(skyGeo, material2);
 	sky.material.side = THREE.BackSide;
-	scene.add(sky);
+	//scene.add(sky);
 	
 	// Piso		
 	var geometry = new THREE.PlaneGeometry( 500, 500, 1, 1);
@@ -249,7 +257,7 @@ $(document).ready(function() {
 	var plane = new THREE.Mesh( geometry, grassMaterial);
 	plane.rotation.x = de2ra(90);
 	plane.receiveShadow = true;
-	scene.add( plane );
+	//scene.add( plane );
 	
 	// Objetos
 	var material = new THREE.MeshLambertMaterial ({
@@ -468,7 +476,7 @@ function addModelByBase(name) {
 		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
 		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases		
 		zombieSpawned.position.x = xPosSpawn;
-		zombieSpawned.position.y = 0;
+		zombieSpawned.position.y = 0.1;
 		zombieSpawned.position.z = -5;
 		id++;
 		zombieSpawned.name = id;
@@ -478,8 +486,10 @@ function addModelByBase(name) {
 
 	if(name == "bala") {
 		var balaSpawned = bala.clone();		
+		balaSpawned.rotation.y = de2ra(170);
+
 		balaSpawned.position.x = posXJugador;
-		balaSpawned.position.y = posYJugador+1;
+		balaSpawned.position.y = posYJugador+1.5;
 		balaSpawned.position.z = posZJugador;
 		id++;
 		balaSpawned.name = id;
@@ -565,7 +575,7 @@ function loadObjBases(objPath, texturePath, name) {
 		});
 
 		if(name == "zombie"){
-			object.scale.set(0.012,0.012,0.012);
+			object.scale.set(0.014,0.014,0.014);
 			zombie = object.clone();	
 		}
 
@@ -594,27 +604,18 @@ function loadObjBases(objPath, texturePath, name) {
 function initLights(){
 	ambientLight = new THREE.AmbientLight(
 		new THREE.Color(1, 1, 1),
-		1.0
+		0.3
 	);
 	
 	directionalLight = new THREE.DirectionalLight(
 		new THREE.Color(1, 1, 1),
-		0.4
+		0.5
 	);
 
 	var d = 15;
-    directionalLight.castShadow = true;
-    directionalLight.shadowCameraVisible = true;
     directionalLight.position.set(10, 10, -10);
     directionalLight.target.position.set(0, 0, 0);
-    directionalLight.shadowCameraNear = 2;
-	directionalLight.shadowCameraFar = 5;
-	directionalLight.shadowCameraLeft = -d;
-	directionalLight.shadowCameraRight = d;
-	directionalLight.shadowCameraTop = d;
-	directionalLight.shadowCameraBottom = -d;
-    directionalLight.shadowCameraFar = 1000;
-    directionalLight.shadowDarkness = 0.5;		
+	
 }
 
 function limpiarArreglos() {

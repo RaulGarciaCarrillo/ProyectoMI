@@ -26,6 +26,10 @@
 			src: url(font/DeadKansas.ttf);
 			font-weight: bold;
 		}
+
+		* {
+			font-family: DeadKansas;
+		}
 	</style>
 </head>
 <body>
@@ -43,15 +47,17 @@
 		<div class="menu" onclick="window.location='index.html';">SALIR</div>			
 	</div>
 
-	<div id="dialog-form" title="GAME OVER">
+	<div id="dialog-form" title="GAME OVER" style="text-align: center;">
 	  <form>
 	    <fieldset>
+	      <p id="playerName"></p>
+	      <br>
 	      <p id="scoreModal"></p>
 	    </fieldset>
 	  </form>
 	</div>
 
-	<div id="dialog-form2" title="GAME OVER">
+	<div id="dialog-form2" title="GAME OVER" style="text-align: center;">
 	  <form>
 	    <fieldset>
 	      <label for="name">Nombre </label>

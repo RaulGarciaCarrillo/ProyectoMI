@@ -202,6 +202,7 @@ function render() {
 			if(localStorage.usuario === undefined || localStorage.usuario == ""){
 				dialog2.dialog( "open" );
 			} else{
+				$("#playerName").append(localStorage.usuario);
 				dialog.dialog( "open" );
 			}
 			gameover = true;		
