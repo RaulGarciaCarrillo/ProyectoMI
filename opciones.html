@@ -22,9 +22,15 @@ $(document).ready(function() {
 
 	if(localStorage.audio === null || localStorage.audio == ""){
 		localStorage.audio = "si";
-	}else{
-		
+		$("#audioSi").addClass("check");
+	} else if (localStorage.audio == "si") {
+		$("#audioSi").addClass("check");
+	} else {
+		$("#audioNo").addClass("check");
 	}
+
+
+	
 
 	document.addEventListener('keyup',onDocumentKeyUp,false);
 
@@ -33,6 +39,18 @@ $(document).ready(function() {
 	}
 
 })
+
+	function addAudio() {
+		$("#audioSi").addClass("check");
+		$("#audioNo").removeClass("check");
+		localStorage.audio = "si";
+	}
+
+	function removeAudio() {
+		$("#audioNo").addClass("check");
+		$("#audioSi").removeClass("check");
+		localStorage.audio = "no";
+	}
 	
 </script>
 <body>
@@ -49,13 +67,8 @@ $(document).ready(function() {
 			</tr>
 			<tr>
 				<td>AUDIO</td>
-				<td class="check">SI</td>
-				<td>NO</td>
-			</tr>
-			<tr>
-				<td>TIEMPO</td>
-				<td>DIA</td>
-				<td class="check">NOCHE</td>
+				<td id="audioSi" onclick="addAudio();" style="cursor: pointer;">SI</td>
+				<td id="audioNo" onclick="removeAudio();" style="cursor: pointer;">NO</td>
 			</tr>
 		</table>
 	<div class="menu" onclick="window.location='index.html';">Regresar</div>

@@ -61,15 +61,27 @@ var spotLight;
 var spotLight2;
 var spotLight3;
 
+var isAudio = true;
+
 $(document).ready(function() {
+
+	if(localStorage.audio === null || localStorage.audio == ""){
+		isAudio = true;
+	} else if (localStorage.audio == "si"){
+		isAudio = true;		
+	} else {
+		isAudio = false;
+	}
 
 	clock = new THREE.Clock();
 	stats = new Stats();
 	stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 	document.body.appendChild( stats.dom );
 
-	var audio = new Audio('audio/ambiente.mp3');
-	audio.play();
+	if(isAudio) {
+		var audio = new Audio('audio/ambiente.mp3');
+		audio.play();
+	}
 
 	$(".numBombas").empty();
 	$(".numBombas").append("x " + cantidadBombas);
@@ -110,14 +122,14 @@ $(document).ready(function() {
 	    			});
 	    			dialog.dialog( "close" );
 	    			FB.ui({
-			        method: 'share',
-			        picture:'http://miadventure.x10.mx/portadaMI2.png',
-			        href:'http://miadventure.x10.mx/',
+			    	method: 'share',
+				    href:'http://miadventure.x10.mx/',
 			        caption: 'Dead Hunting',
-			        quote: "My Score: " + score,
-			        hashtag: "#MiAdventure"
-			      }, function(response){});
-			      dialog.dialog( "close" );		
+			        quote: "Mi puntaje: " + score,
+			        hashtag: "#DeadHunting"
+					  }, function(response){});
+					  dialog2.dialog( "close" );	
+					  window.location = 'index.html';
 		        },
 		        CONTINUAR: function() {	          
 		           
@@ -201,7 +213,7 @@ $(document).ready(function() {
 	spotLight.shadow.mapSize.width = 1024;
 	spotLight.shadow.mapSize.height = 1024;
 	spotLight.shadow.camera.near = 1;
-	spotLight.shadow.camera.far = 200;
+	spotLight.shadow.camera.far = 2000;
 	spotLight.intensity = 1;
 	scene.add( spotLight );
 
@@ -256,7 +268,7 @@ $(document).ready(function() {
 
 	var plane = new THREE.Mesh( geometry, grassMaterial);
 	plane.rotation.x = de2ra(90);
-	plane.receiveShadow = true;
+	plane.castShadow = true;
 	//scene.add( plane );
 	
 	// Objetos
@@ -297,7 +309,7 @@ $(document).ready(function() {
 	loadObjBases("assets/models/bullet/bullet.obj","assets/models/bullet/bullet.png","bala");
 	loadObjBases("assets/models/Bomb/Bomb.obj","assets/models/Bomb/Bomb.png","bomba");
 	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
-	addModel("assets/models/escenario/hospital.obj","assets/models/escenario/hospital.jpg","escenario");
+	addModel("assets/models/escenario/hospital.obj","assets/models/escenario/hospital.jpg","hospital");
 	addModel("assets/models/escenario/VistasOpi.obj","assets/models/escenario/VistasOpi.png","Vistas");
 	scene.add(ambientLight);
 	scene.add(directionalLight);
@@ -364,8 +376,10 @@ function spawnBullet() {
 	if(numBalas > 0 && !recargando){
 		addModelByBase("bala");
 		numBalas--;
-		var audio = new Audio('audio/9mm.mp3');
-		audio.play();
+		if (isAudio) {
+			var audio = new Audio('audio/9mm.mp3');
+			audio.play();
+		}
 		jugador.position.z += 0.1;
 	} else {
 		if(!recargando){
@@ -376,8 +390,10 @@ function spawnBullet() {
 
 function recargar(){
 	recargando = true;
-	var audio = new Audio('audio/reload.mp3');
-	audio.play();	
+	if(isAudio) {
+		var audio = new Audio('audio/reload.mp3');
+		audio.play();
+	}	
 	setTimeout(function(){ 
 		numBalas = 20; 		
 		recargando = false;
@@ -392,24 +408,23 @@ function spawnBomba() {
 }
 
 function spawnZombie() {	
-	if(!gameover){
 		addModelByBase("zombie");
 		setTimeout(spawnZombie, 2000);
-	}
+	
 }
 
 function spawnJefeZombie() {
-	if(!gameover){
+
 		addModelByBase("jefeZombie");
 		setTimeout(spawnJefeZombie, 10000);
-	}
+	
 }
 
 function spawnHumano() {	
-	if(!gameover){
+
 		addModelByBase("humano");
 		setTimeout(spawnHumano, 7000);
-	}
+	
 }
 
 // Convertierte de grados a radianes
@@ -449,7 +464,9 @@ function addModel(objPath, texturePath, name){
 			}
 		});	
 
-		
+		if (name == "hospital"){
+		object.receiveShadow = true;
+		}
 		object.name = name;		
 			object.scale.set(0.2,0.2,0.2);
 			object.position.z = posZJugador;
@@ -473,74 +490,80 @@ function addModel(objPath, texturePath, name){
 }
 
 function addModelByBase(name) {
-	if(name == "zombie") {
-		var zombieSpawned = zombie.clone();
-		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
-		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases		
-		zombieSpawned.position.x = xPosSpawn;
-		zombieSpawned.position.y = 0.1;
-		zombieSpawned.position.z = -5;
-		id++;
-		zombieSpawned.name = id;
-		zombies.push(zombieSpawned);		
-		scene.add(zombieSpawned);
-	}
+	if(!gameover){
+		if(name == "zombie") {
+			var zombieSpawned = zombie.clone();
+			var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
+			xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases		
+			zombieSpawned.position.x = xPosSpawn;
+			zombieSpawned.position.y = 0.1;
+			zombieSpawned.position.z = -5;
+			id++;
+			zombieSpawned.name = id;
+			zombies.push(zombieSpawned);		
+			scene.add(zombieSpawned);
+		}
 
-	if(name == "bala") {
-		var balaSpawned = bala.clone();		
-		balaSpawned.rotation.y = de2ra(170);
+		if(name == "bala") {
+			var balaSpawned = bala.clone();		
+			balaSpawned.rotation.y = de2ra(170);
 
-		balaSpawned.position.x = posXJugador;
-		balaSpawned.position.y = posYJugador+1.5;
-		balaSpawned.position.z = posZJugador;
-		id++;
-		balaSpawned.name = id;
-		balas.push(balaSpawned);		
-		scene.add(balaSpawned);
-	}
+			balaSpawned.position.x = posXJugador;
+			balaSpawned.position.y = posYJugador+1.5;
+			balaSpawned.position.z = posZJugador;
+			id++;
+			balaSpawned.name = id;
+			balas.push(balaSpawned);		
+			scene.add(balaSpawned);
+		}
 
-	if(name == "bomba") {
-		var bombaSpawned = bomba.clone();		
-		bombaSpawned.position.x = posXJugador;
-		bombaSpawned.position.y = posYJugador;
-		bombaSpawned.position.z = posZJugador;
-		id++;
-		bombaSpawned.name = id;
-		bombas.push(bombaSpawned);		
-		scene.add(bombaSpawned);
-	}
+		if(name == "bomba") {
+			var bombaSpawned = bomba.clone();		
+			bombaSpawned.position.x = posXJugador;
+			bombaSpawned.position.y = posYJugador;
+			bombaSpawned.position.z = posZJugador;
+			id++;
+			bombaSpawned.name = id;
+			bombas.push(bombaSpawned);		
+			scene.add(bombaSpawned);
+		}
 
-	if (name == "jefeZombie"){
+		if (name == "jefeZombie"){
 
-		var jefeZombieSpawned = jefeZombie.clone();
-		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
-		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
-		jefeZombieSpawned.position.x = xPosSpawn;
-		jefeZombieSpawned.position.y = 0;
-		jefeZombieSpawned.position.z = -5;
-		id++;
-		jefeZombieSpawned.name = id;
-		vidaJefe.push(3);
-		jefesZombie.push(jefeZombieSpawned);		
-		scene.add(jefeZombieSpawned);
-		var audio = new Audio('audio/jefeSpawn.mp3');
-		audio.play();
-	}
+			var jefeZombieSpawned = jefeZombie.clone();
+			var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
+			xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
+			jefeZombieSpawned.position.x = xPosSpawn;
+			jefeZombieSpawned.position.y = 0;
+			jefeZombieSpawned.position.z = -5;
+			id++;
+			jefeZombieSpawned.name = id;
+			vidaJefe.push(3);
+			jefesZombie.push(jefeZombieSpawned);		
+			scene.add(jefeZombieSpawned);
+			if(isAudio) {
+				var audio = new Audio('audio/jefeSpawn.mp3');
+				audio.play();
+			}
+		}
 
-	if (name == "humano"){
-		var humanoSpawned = humano.clone();
-		var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
-		xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
-		humanoSpawned.position.x = xPosSpawn;
-		humanoSpawned.position.y = 0;
-		humanoSpawned.position.z = -5;
-		id++;
-		humanoSpawned.name = id;
-		humanos.push(humanoSpawned);		
-		scene.add(humanoSpawned);
-		var audio = new Audio('audio/help.mp3');
-		audio.play();
+		if (name == "humano"){
+			var humanoSpawned = humano.clone();
+			var xPosSpawn = Math.floor(Math.random()*3) + 1; // this will get a number between 1 and 99;		
+			xPosSpawn *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases	
+			humanoSpawned.position.x = xPosSpawn;
+			humanoSpawned.position.y = 0;
+			humanoSpawned.position.z = -5;
+			id++;
+			humanoSpawned.name = id;
+			humanos.push(humanoSpawned);		
+			scene.add(humanoSpawned);
+			if(isAudio) {
+				var audio = new Audio('audio/help.mp3');
+				audio.play();
+			}
 
+		}
 	}
 }
 
@@ -577,6 +600,7 @@ function loadObjBases(objPath, texturePath, name) {
 		});
 
 		if(name == "zombie"){
+			object.castShadow = true;
 			object.scale.set(0.014,0.014,0.014);
 			zombie = object.clone();	
 		}

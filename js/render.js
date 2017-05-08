@@ -7,7 +7,7 @@ function render() {
 
 	// Actualizacion del numero de balas
 	$(".numBalas").empty();
-	$(".numBalas").html("x " + numBalas + "/ <span>∞<span>");
+	$(".numBalas").html("x " + numBalas );
 
 	if(!gameover) {	
 
@@ -32,8 +32,10 @@ function render() {
 					limpiarArreglos();
 					score+=10;
 					auxScore+=10;
-					var audio = new Audio('audio/impacto.mp3');
-					audio.play();
+					if(isAudio) {
+						var audio = new Audio('audio/impacto.mp3');
+						audio.play();
+					}
 					// Animacion del score
 					$(".numScore").text(score);
 					$( ".numScore" ).animate({
@@ -61,8 +63,10 @@ function render() {
 						delete balas[j];
 						delete vidaJefe[j];
 						limpiarArreglos();
-						var audio = new Audio('audio/impacto.mp3');
-						audio.play();
+						if(isAudio) {
+							var audio = new Audio('audio/impacto.mp3');
+							audio.play();
+						}
 						score+=30;
 						auxScore+=30;
 
@@ -94,8 +98,10 @@ function render() {
 					scene.remove(scene.getObjectByName(balas[j].name));
 					delete humanos[i];
 					delete balas[j];
-					var audio = new Audio('audio/humano.mp3');
-					audio.play();
+					if(isAudio) {
+						var audio = new Audio('audio/humano.mp3');
+						audio.play();
+					}
 					limpiarArreglos();
 					var vidaSize = $(".vida").css("width");
 					vidaSize = vidaSize.replace('px','');
@@ -115,8 +121,10 @@ function render() {
 					&& anguloBomba > 160){
 					scene.remove(scene.getObjectByName(zombies[i].name));
 					scene.remove(scene.getObjectByName(bombas[j].name));
-					var audio = new Audio('audio/impacto.mp3');
-					audio.play();
+					if(isAudio) {
+						var audio = new Audio('audio/impacto.mp3');
+						audio.play();
+					}
 					delete zombies[i];
 					limpiarArreglos();
 				}	
@@ -138,9 +146,10 @@ function render() {
 					scene.remove(scene.getObjectByName(bombas[j].name));
 					delete jefesZombie[i];
 					delete vidaJefe[j];
-
-					var audio = new Audio('audio/impacto.mp3');
-					audio.play();
+					if(isAudio) {
+						var audio = new Audio('audio/impacto.mp3');
+						audio.play();
+					}
 
 					limpiarArreglos();
 				}	
@@ -223,9 +232,12 @@ function render() {
 		for (var i = 0; i < bombas.length; i++){
 			if(bombas[i].position.y < 0){
 				scene.remove(scene.getObjectByName(bombas[i].name));
-				var audio = new Audio('audio/LAW.mp3');
+				if(isAudio) {
+					var audio = new Audio('audio/LAW.mp3');
+					audio.play();
+				}
 				lanzandoTNT = false;
-				audio.play();
+				
 				parts.push(new ExplodeAnimation(bombas[i].position.x, bombas[i].position.y, bombas[i].position.z));
 				delete bombas[i];
 				limpiarArreglos();

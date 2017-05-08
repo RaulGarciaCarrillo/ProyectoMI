@@ -77,8 +77,10 @@ textarea:focus, input:focus{
 	background-repeat: no-repeat;
 	background-size: 201px 113px;
 	background-position: center;
-	cursor: pointer;
+	
 }
+
+
 
 .nombre {
 	padding-left: 90px;
