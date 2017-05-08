@@ -311,14 +311,7 @@ $(document).ready(function() {
  		if(!gameover){
  			//Tecla "b"
 	    	if (e.keyCode==98){
-	    		if (cantidadBombas > 0 && lanzandoTNT == false){    			
-	    			lanzandoTNT = true;
-	    			spawnBomba();    			
-	    			anguloBomba = 20;
-	    			cantidadBombas -= 1;
-	    			$(".numBombas").empty();
-					$(".numBombas").append("x " + cantidadBombas);
-	    		}
+	    		
 	    	}
 	    	//Tecla "p"
 	    	if (e.keyCode==112){
@@ -350,7 +343,16 @@ $(document).ready(function() {
 				spawnBullet();
 		        break;
 		    case 3:
-		        //alert('Right Mouse button pressed.');
+
+
+		        if (cantidadBombas > 0 && lanzandoTNT == false){    			
+	    			lanzandoTNT = true;
+	    			spawnBomba();    			
+	    			anguloBomba = 20;
+	    			cantidadBombas -= 1;
+	    			$(".numBombas").empty();
+					$(".numBombas").append("x " + cantidadBombas);
+	    		}
 		        break;
 			}
 		}
@@ -359,7 +361,7 @@ $(document).ready(function() {
 }); // Fin del document ready
 
 function spawnBullet() {
-	if(numBalas > 0){
+	if(numBalas > 0 && !recargando){
 		addModelByBase("bala");
 		numBalas--;
 		var audio = new Audio('audio/9mm.mp3');

@@ -253,10 +253,24 @@ function render() {
 						jugador.position.x -= 1;
 						posXJugador = jugador.position.x;
 					break;
+					case 65 :
+						jugador.position.x -= 1;
+						posXJugador = jugador.position.x;
+					break;
 					case 39 : // Flecha derecha
 						jugador.position.x += 1;
 						posXJugador = jugador.position.x;
 					break;
+					case 68 : // Flecha derecha
+						jugador.position.x += 1;
+						posXJugador = jugador.position.x;
+					break;
+					case 82:
+						if(!recargando){
+							recargar();
+						}
+					break;
+
 				}		
 			
 				if(posXJugador > 3){
