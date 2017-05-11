@@ -15,12 +15,12 @@
 <script>
 $(document).ready(function() {
 
-	if(localStorage.usuario === null || localStorage.usuario == ""){
+	if(localStorage.usuario === undefined || localStorage.usuario == ""){
 	}else{
 		$(".namre").val(localStorage.usuario);
 	}
 
-	if(localStorage.audio === null || localStorage.audio == ""){
+	if(localStorage.audio === undefined || localStorage.audio == ""){
 		localStorage.audio = "si";
 		$("#audioSi").addClass("check");
 	} else if (localStorage.audio == "si") {

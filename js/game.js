@@ -65,7 +65,7 @@ var isAudio = true;
 
 $(document).ready(function() {
 
-	if(localStorage.audio === null || localStorage.audio == ""){
+	if(localStorage.audio === undefined || localStorage.audio == ""){
 		isAudio = true;
 	} else if (localStorage.audio == "si"){
 		isAudio = true;		
@@ -112,29 +112,24 @@ $(document).ready(function() {
 		      modal: true,
 		      buttons: {
 		        COMPARTIR: function() {
-		          var name = $("#name").val();
-		          localStorage.usuario = name;
 		          $.ajax({
 	      				type: "POST",
-						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
 	    			}).done(function(data) {
 	      				console.log(data);
 	    			});
 	    			dialog.dialog( "close" );
-	    			FB.ui({
+	    			/*FB.ui({
 			    	method: 'share',
 				    href:'http://miadventure.x10.mx/',
 			        caption: 'Dead Hunting',
 			        quote: "Mi puntaje: " + score,
 			        hashtag: "#DeadHunting"
-					  }, function(response){});
+					  }, function(response){});*/
 					  dialog2.dialog( "close" );	
 					  window.location = 'index.html';
 		        },
-		        CONTINUAR: function() {	          
-		           
-		          
-
+		        CONTINUAR: function() {	    		           
 		          $.ajax({
 	      				type: "POST",
 						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
@@ -160,32 +155,30 @@ $(document).ready(function() {
 			  localStorage.usuario = name;
 			  $.ajax({
 						type: "POST",
-					url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score
+						url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
 				}).done(function(data) {
 						console.log(data);
 				});
 				dialog.dialog( "close" );
-				FB.ui({
+				/*FB.ui({
 			    method: 'share',
 			    picture:'http://miadventure.x10.mx/portadaMI2.png',
 			    href:'http://miadventure.x10.mx/',
 			    caption: 'Dead Hunting',
 			    quote: "My Score: " + score,
 			    hashtag: "#MiAdventure"
-			  }, function(response){});
+			  }, function(response){});*/
 			  dialog2.dialog( "close" );		
 			},
 			CONTINUAR: function() {
 			  var name = $("#name").val();
 			  localStorage.usuario = name;
+			  
 			  $.ajax({
 					type: "POST",
-					url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+name+"&score="+score,
-					error: function (x, h,r ){
-						alert(x + h + r);
-					}
+					url: "http://deadhunting.x10.mx/InsertScore.php?nombre="+localStorage.usuario+"&score="+score
 				}).done(function(data) {
-					console.log(data);
+					
 				});
 				dialog2.dialog( "close" );
 				window.location = 'index.html';

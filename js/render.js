@@ -230,7 +230,7 @@ function render() {
 
 		// Impulso de la bomba
 		for (var i = 0; i < bombas.length; i++){
-			if(bombas[i].position.y < 0){
+			if(bombas[i].position.y < 0 && anguloBomba > 100){
 				scene.remove(scene.getObjectByName(bombas[i].name));
 				if(isAudio) {
 					var audio = new Audio('audio/LAW.mp3');
