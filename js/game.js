@@ -302,7 +302,7 @@ $(document).ready(function() {
 	loadObjBases("assets/models/bullet/bullet.obj","assets/models/bullet/bullet.png","bala");
 	loadObjBases("assets/models/Bomb/Bomb.obj","assets/models/Bomb/Bomb.png","bomba");
 	addModel("assets/models/soldier/soldier.obj","assets/models/soldier/SWATGuy_Bottom_Diffuse.png","jugador");
-	addModel("assets/models/escenario/hospital.obj","assets/models/escenario/hospital.jpg","hospital");
+	addModel("assets/models/escenario/Hospital.obj","assets/models/escenario/Hospital.jpg","hospital");
 	addModel("assets/models/escenario/VistasOpi.obj","assets/models/escenario/VistasOpi.png","Vistas");
 	scene.add(ambientLight);
 	scene.add(directionalLight);
